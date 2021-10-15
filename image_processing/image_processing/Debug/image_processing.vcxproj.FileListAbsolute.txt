@@ -1,3 +1,3 @@
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\Debug\image_processing.vcxproj.AssemblyReference.cache
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\Debug\imageprocessing.MyForm.resources
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\Debug\image_processing.vcxproj.GenerateResource.cache
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\Debug\image_processing.vcxproj.AssemblyReference.cache

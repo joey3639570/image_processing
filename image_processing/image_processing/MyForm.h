@@ -48,6 +48,9 @@ namespace imageprocessing {
 	private: System::Windows::Forms::Button^ buttonMedian;
 	private: System::Windows::Forms::Button^ buttonHistogram;
 	private: System::Windows::Forms::Button^ buttonThreshold;
+	private: System::Windows::Forms::TextBox^ textBoxThresh;
+	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart2;
+	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
 	private:
 		/// <summary>
 		/// 設計工具所需的變數。
@@ -61,6 +64,12 @@ namespace imageprocessing {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Legend^ legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+			System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Legend^ legend2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+			System::Windows::Forms::DataVisualization::Charting::Series^ series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->picture_box1 = (gcnew System::Windows::Forms::PictureBox());
 			this->button2 = (gcnew System::Windows::Forms::Button());
@@ -71,8 +80,15 @@ namespace imageprocessing {
 			this->buttonGray = (gcnew System::Windows::Forms::Button());
 			this->buttonMean = (gcnew System::Windows::Forms::Button());
 			this->buttonMedian = (gcnew System::Windows::Forms::Button());
+			this->buttonHistogram = (gcnew System::Windows::Forms::Button());
+			this->buttonThreshold = (gcnew System::Windows::Forms::Button());
+			this->textBoxThresh = (gcnew System::Windows::Forms::TextBox());
+			this->chart2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
+			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box2))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart2))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// button1
@@ -87,6 +103,7 @@ namespace imageprocessing {
 			// 
 			// picture_box1
 			// 
+			this->picture_box1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->picture_box1->Location = System::Drawing::Point(32, 24);
 			this->picture_box1->Name = L"picture_box1";
 			this->picture_box1->Size = System::Drawing::Size(448, 448);
@@ -104,8 +121,9 @@ namespace imageprocessing {
 			this->button2->UseVisualStyleBackColor = true;
 			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
 			// 
-			// picture_box1
+			// picture_box2
 			// 
+			this->picture_box2->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->picture_box2->Location = System::Drawing::Point(544, 24);
 			this->picture_box2->Name = L"picture_box2";
 			this->picture_box2->Size = System::Drawing::Size(448, 448);
@@ -113,7 +131,7 @@ namespace imageprocessing {
 			this->picture_box2->TabIndex = 3;
 			this->picture_box2->TabStop = false;
 			// 
-			// Red Extraction Button
+			// buttonRed
 			// 
 			this->buttonRed->Location = System::Drawing::Point(32, 576);
 			this->buttonRed->Name = L"buttonRed";
@@ -123,7 +141,7 @@ namespace imageprocessing {
 			this->buttonRed->UseVisualStyleBackColor = true;
 			this->buttonRed->Click += gcnew System::EventHandler(this, &MyForm::buttonRed_Click);
 			// 
-			// Blue Extraction Button
+			// buttonBlue
 			// 
 			this->buttonBlue->Location = System::Drawing::Point(32, 640);
 			this->buttonBlue->Name = L"buttonBlue";
@@ -133,7 +151,7 @@ namespace imageprocessing {
 			this->buttonBlue->UseVisualStyleBackColor = true;
 			this->buttonBlue->Click += gcnew System::EventHandler(this, &MyForm::buttonBlue_Click);
 			// 
-			// Green Extraction Button
+			// buttonGreen
 			// 
 			this->buttonGreen->Location = System::Drawing::Point(160, 576);
 			this->buttonGreen->Name = L"buttonGreen";
@@ -143,7 +161,7 @@ namespace imageprocessing {
 			this->buttonGreen->UseVisualStyleBackColor = true;
 			this->buttonGreen->Click += gcnew System::EventHandler(this, &MyForm::buttonGreen_Click);
 			// 
-			// Gray scale Button
+			// buttonGray
 			// 
 			this->buttonGray->Location = System::Drawing::Point(160, 640);
 			this->buttonGray->Name = L"buttonGray";
@@ -153,51 +171,86 @@ namespace imageprocessing {
 			this->buttonGray->UseVisualStyleBackColor = true;
 			this->buttonGray->Click += gcnew System::EventHandler(this, &MyForm::buttonGray_Click);
 			// 
-			// Mean Filter Button
+			// buttonMean
 			// 
-			this->buttonGray->Location = System::Drawing::Point(288, 576);
-			this->buttonGray->Name = L"buttonMean";
-			this->buttonGray->Size = System::Drawing::Size(96, 32);
-			this->buttonGray->TabIndex = 8;
-			this->buttonGray->Text = L"Mean Filter";
-			this->buttonGray->UseVisualStyleBackColor = true;
-			this->buttonGray->Click += gcnew System::EventHandler(this, &MyForm::buttonMean_Click);
+			this->buttonMean->Location = System::Drawing::Point(288, 576);
+			this->buttonMean->Name = L"buttonMean";
+			this->buttonMean->Size = System::Drawing::Size(96, 32);
+			this->buttonMean->TabIndex = 8;
+			this->buttonMean->Text = L"Mean Filter";
+			this->buttonMean->UseVisualStyleBackColor = true;
+			this->buttonMean->Click += gcnew System::EventHandler(this, &MyForm::buttonMean_Click);
 			// 
-			// Median Filter Button
+			// buttonMedian
 			// 
-			this->buttonGray->Location = System::Drawing::Point(288, 640);
-			this->buttonGray->Name = L"buttonMedian";
-			this->buttonGray->Size = System::Drawing::Size(96, 32);
-			this->buttonGray->TabIndex = 9;
-			this->buttonGray->Text = L"Median Filter";
-			this->buttonGray->UseVisualStyleBackColor = true;
-			this->buttonGray->Click += gcnew System::EventHandler(this, &MyForm::buttonMedian_Click);
+			this->buttonMedian->Location = System::Drawing::Point(288, 640);
+			this->buttonMedian->Name = L"buttonMedian";
+			this->buttonMedian->Size = System::Drawing::Size(96, 32);
+			this->buttonMedian->TabIndex = 9;
+			this->buttonMedian->Text = L"Median Filter";
+			this->buttonMedian->UseVisualStyleBackColor = true;
+			this->buttonMedian->Click += gcnew System::EventHandler(this, &MyForm::buttonMedian_Click);
 			// 
-			// Histogram Equalization Button
+			// buttonHistogram
 			// 
-			this->buttonGray->Location = System::Drawing::Point(416, 576);
-			this->buttonGray->Name = L"buttonHistogram";
-			this->buttonGray->Size = System::Drawing::Size(96, 32);
-			this->buttonGray->TabIndex = 10;
-			this->buttonGray->Text = L"Histogram Equalization";
-			this->buttonGray->UseVisualStyleBackColor = true;
-			this->buttonGray->Click += gcnew System::EventHandler(this, &MyForm::buttonHistogram_Click);
+			this->buttonHistogram->Location = System::Drawing::Point(416, 576);
+			this->buttonHistogram->Name = L"buttonHistogram";
+			this->buttonHistogram->Size = System::Drawing::Size(96, 32);
+			this->buttonHistogram->TabIndex = 10;
+			this->buttonHistogram->Text = L"Histogram Equalization";
+			this->buttonHistogram->UseVisualStyleBackColor = true;
+			this->buttonHistogram->Click += gcnew System::EventHandler(this, &MyForm::buttonHistogram_Click);
 			// 
-			// Threshold Button
+			// buttonThreshold
 			// 
-			this->buttonGray->Location = System::Drawing::Point(416, 640);
-			this->buttonGray->Name = L"buttonThreshold";
-			this->buttonGray->Size = System::Drawing::Size(96, 32);
-			this->buttonGray->TabIndex = 11;
-			this->buttonGray->Text = L"Threshold";
-			this->buttonGray->UseVisualStyleBackColor = true;
-			this->buttonGray->Click += gcnew System::EventHandler(this, &MyForm::buttonThreshold_Click);
+			this->buttonThreshold->Location = System::Drawing::Point(160, 704);
+			this->buttonThreshold->Name = L"buttonThreshold";
+			this->buttonThreshold->Size = System::Drawing::Size(96, 32);
+			this->buttonThreshold->TabIndex = 11;
+			this->buttonThreshold->Text = L"Threshold";
+			this->buttonThreshold->UseVisualStyleBackColor = true;
+			this->buttonThreshold->Click += gcnew System::EventHandler(this, &MyForm::buttonThreshold_Click);
+			// 
+			// textBoxThresh
+			// 
+			this->textBoxThresh->Location = System::Drawing::Point(32, 704);
+			this->textBoxThresh->Name = L"textBoxThresh";
+			this->textBoxThresh->Size = System::Drawing::Size(96, 22);
+			this->textBoxThresh->TabIndex = 12;
+			// 
+			// chart2
+			// 
+			chartArea1->Name = L"ChartArea2";
+			this->chart2->ChartAreas->Add(chartArea1);
+			this->chart2->Location = System::Drawing::Point(713, 657);
+			this->chart2->Name = L"chart2";
+			series1->ChartArea = L"ChartArea2";
+			series1->Name = L"Series1";
+			this->chart2->Series->Add(series1);
+			this->chart2->Size = System::Drawing::Size(279, 101);
+			this->chart2->TabIndex = 14;
+			this->chart2->Text = L"chart2";
+			// 
+			// chart1
+			// 
+			chartArea2->Name = L"ChartArea1";
+			this->chart1->ChartAreas->Add(chartArea2);
+			this->chart1->Location = System::Drawing::Point(713, 551);
+			this->chart1->Name = L"chart1";
+			series2->ChartArea = L"ChartArea1";
+			series2->Name = L"Series1";
+			this->chart1->Series->Add(series2);
+			this->chart1->Size = System::Drawing::Size(279, 101);
+			this->chart1->TabIndex = 15;
+			this->chart1->Text = L"chart1";
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1024, 768);
+			this->Controls->Add(this->chart1);
+			this->Controls->Add(this->chart2);
 			this->Controls->Add(this->picture_box1);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->picture_box2);
@@ -210,10 +263,14 @@ namespace imageprocessing {
 			this->Controls->Add(this->buttonMedian);
 			this->Controls->Add(this->buttonHistogram);
 			this->Controls->Add(this->buttonThreshold);
+			this->Controls->Add(this->textBoxThresh);
 			this->Name = L"MyForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box2))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart2))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 		// Bitmap object for the picture you opened宣告Bitmap 儲存開啟的圖
@@ -227,7 +284,7 @@ namespace imageprocessing {
 
 		// int pointer for calculation
 		IntPtr ptr, GrayResultPtr, RedResultPtr, GreenResultPtr, BlueResultPtr;
-		IntPtr meanResultPtr, medianResultPtr;
+		IntPtr meanResultPtr, medianResultPtr, histResultPtr, threshResultPtr;
 
 		// Byte pointer
 		Byte* p;
@@ -574,7 +631,7 @@ namespace imageprocessing {
 
 		// Gray, set int ptr to the front of the image
 		meanResultPtr = meanImageData->Scan0;
-		mean = (Byte*)((Void*)GrayResultPtr);
+		mean = (Byte*)((Void*)meanResultPtr);
 
 		// Lock the original image
 		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
@@ -584,7 +641,7 @@ namespace imageprocessing {
 		p = (Byte*)((Void*)ptr);
 
 		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height; y++)
+		for (int y = 0; y < image1->Height+1; y++)
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
@@ -598,7 +655,7 @@ namespace imageprocessing {
 					mean[r_idx] = p[r_idx];
 					continue;
 				}
-				else if(y == image1->Height-1 || x == 0 || x == image1->Width-1) {
+				else if(y == image1->Height || x == 0 || x == image1->Width-1) {
 					int b_idx = 3*x + 3 * image1->Width * (y-1);
 					int g_idx = 3*x + 3 * image1->Width * (y-1) + 1;
 					int r_idx = 3*x + 3 * image1->Width * (y-1) + 2;
@@ -620,15 +677,15 @@ namespace imageprocessing {
 				int bot_right_idx 	= 3*(x+1) + 3 * image1->Width * (y+1);
 				
 				// mean_filter
-				int b_mean = (p[top_left_idx] + p[top_idx] + p[top_right_idx] 
-							+ p[left_idx] + p[mid_idx] + p[right_idx] 
-							+ p[bot_left_idx] + p[bot_idx] + p[bot_right_idx]) / 9
-				int g_mean = (p[top_left_idx+1] + p[top_idx+1] + p[top_right_idx+1] 
-							+ p[left_idx+1] + p[mid_idx+1] + p[right_idx+1] 
-							+ p[bot_left_idx+1] + p[bot_idx+1] + p[bot_right_idx+1]) / 9
-				int r_mean = (p[top_left_idx+2] + p[top_idx+2] + p[top_right_idx+2] 
-							+ p[left_idx+2] + p[mid_idx+2] + p[right_idx+2] 
-							+ p[bot_left_idx+2] + p[bot_idx+2] + p[bot_right_idx+2]) / 9
+				int b_mean = (p[top_left_idx] + p[top_idx] + p[top_right_idx]
+					+ p[left_idx] + p[mid_idx] + p[right_idx]
+					+ p[bot_left_idx] + p[bot_idx] + p[bot_right_idx]) / 9;
+				int g_mean = (p[top_left_idx + 1] + p[top_idx + 1] + p[top_right_idx + 1]
+						+ p[left_idx + 1] + p[mid_idx + 1] + p[right_idx + 1]
+						+ p[bot_left_idx + 1] + p[bot_idx + 1] + p[bot_right_idx + 1]) / 9;
+				int r_mean = (p[top_left_idx + 2] + p[top_idx + 2] + p[top_right_idx + 2]
+						+ p[left_idx + 2] + p[mid_idx + 2] + p[right_idx + 2]
+						+ p[bot_left_idx + 2] + p[bot_idx + 2] + p[bot_right_idx + 2]) / 9;
 				
 				// put averaged value into the result
 				mean[mid_idx] = (Byte)b_mean;
@@ -660,7 +717,7 @@ namespace imageprocessing {
 
 		// Gray, set int ptr to the front of the image
 		medianResultPtr = medianImageData->Scan0;
-		median = (Byte*)((Void*)GrayResultPtr);
+		median = (Byte*)((Void*)medianResultPtr);
 
 		// Lock the original image
 		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
@@ -670,7 +727,7 @@ namespace imageprocessing {
 		p = (Byte*)((Void*)ptr);
 
 		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height; y++)
+		for (int y = 0; y < image1->Height+1; y++)
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
@@ -684,7 +741,7 @@ namespace imageprocessing {
 					median[r_idx] = p[r_idx];
 					continue;
 				}
-				else if(y == image1->Height-1 || x == 0 || x == image1->Width-1) {
+				else if(y == image1->Height || x == 0 || x == image1->Width-1) {
 					int b_idx = 3*x + 3 * image1->Width * (y-1);
 					int g_idx = 3*x + 3 * image1->Width * (y-1) + 1;
 					int r_idx = 3*x + 3 * image1->Width * (y-1) + 2;
@@ -706,15 +763,15 @@ namespace imageprocessing {
 				int bot_right_idx 	= 3*(x+1) + 3 * image1->Width * (y+1);
 				
 				// array setup
-				int b_sorted_array[9] = {p[top_left_idx], p[top_idx], p[top_right_idx],
-										p[left_idx], p[mid_idx], p[right_idx], 
-										p[bot_left_idx], p[bot_idx], p[bot_right_idx]}
-				int g_sorted_array[9] = {p[top_left_idx+1], p[top_idx+1], p[top_right_idx+1],
-										p[left_idx+1], p[mid_idx+1], p[right_idx+1], 
-										p[bot_left_idx+1], p[bot_idx+1], p[bot_right_idx+1]}
-				int r_sorted_array[9] = {p[top_left_idx+2], p[top_idx+2], p[top_right_idx+2],
-										p[left_idx+2], p[mid_idx+2], p[right_idx+2], 
-										p[bot_left_idx+2], p[bot_idx+2], p[bot_right_idx+2]}
+				int b_sorted_array[9] = { p[top_left_idx], p[top_idx], p[top_right_idx],
+										p[left_idx], p[mid_idx], p[right_idx],
+										p[bot_left_idx], p[bot_idx], p[bot_right_idx] };
+				int g_sorted_array[9] = { p[top_left_idx + 1], p[top_idx + 1], p[top_right_idx + 1],
+											p[left_idx + 1], p[mid_idx + 1], p[right_idx + 1],
+											p[bot_left_idx + 1], p[bot_idx + 1], p[bot_right_idx + 1] };
+				int r_sorted_array[9] = { p[top_left_idx + 2], p[top_idx + 2], p[top_right_idx + 2],
+											p[left_idx + 2], p[mid_idx + 2], p[right_idx + 2],
+											p[bot_left_idx + 2], p[bot_idx + 2], p[bot_right_idx + 2] };
 				
 				// sort array
 				std::sort(b_sorted_array, b_sorted_array+9);
@@ -761,21 +818,68 @@ namespace imageprocessing {
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
 
+		int histogram[256];
+		for (int i = 0; i < 256; i++)
+			histogram[i] = 0;
+
 		// process all pixel
 		for (int y = 0; y < image1->Height; y++)
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
-				int pixel = (p[0] * 11 + p[1] * 59 + p[2] * 30 + 50) / 100;
+				// bin calculation
+				histogram[(int)p[0]]++;
+				p += 3;
+			}
+		}
+		// Draw histogram for original image
+		chart1->Series["Series1"]->Points->Clear();
+		for(int i = 0; i < 256; i++)
+			chart1->Series["Series1"]->Points->AddXY(i, histogram[i]);
+
+		// Find first non-zero bin
+		int i = 0;
+		while (!histogram[i]) ++i;
+
+		// PDF Calculation
+		double pdf[256];
+		for (int i = 0; i < 256; i++)
+			pdf[i] = histogram[i] / (image1->Height * image1->Width);
+		// CDF Calculation
+		double s[256 - 1];
+		for (int i = 0; i < 256; i++){
+			int sum = 0;
+			for (int j = 0; j <= i; j++)
+				sum += pdf[j];
+			s[i] = 255 * sum;
+		}
+		int sum = 0;
+		int lut[256];
+		float scale = 255 / (image1->Height * image1->Width);
+		for (int i = 0; i < 256; ++i) {
+			sum += histogram[i];
+			// the value is saturated in range [0, max_val]
+			lut[i] = std::max(0, std::min(int(round(sum * scale)), 255));
+		}
+
+		// ptr initialization
+		p = (Byte*)((Void*)ptr);
+		for (int y = 0; y < image1->Height; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				int pixel = 0;
+				pixel = lut[p[0]];
+
 				Gr[0] = (Byte)pixel;
 				Gr[1] = (Byte)pixel;
 				Gr[2] = (Byte)pixel;
 
-				// Move to next pixel
 				Gr += 3;
 				p += 3;
 			}
 		}
+
 
 		// Unlock pixel
 		image1->UnlockBits(ImageData1);
@@ -787,8 +891,9 @@ namespace imageprocessing {
 	private: System::Void buttonThreshold_Click(System::Object^ sender, System::EventArgs^ e) {
 		// Threshold Filter 
 		
-		int threshold = 128;
-		
+		int threshold = Convert::ToInt32(textBoxThresh->Text);
+		//double threshold = 128;
+
 		// declaration of BitMap object for results
 		Bitmap^ threshImage;
 		threshImage = gcnew Bitmap(image1->Width, image1->Height);
@@ -815,15 +920,20 @@ namespace imageprocessing {
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
+				int pixel;
 				// Threshold filter
-				if (p[0] > threshold || p[1] > threshold || p[2] > threshold)
-					pixel = 1;
-				else 
+				if (p[0] > threshold || p[1] > threshold || p[2] > threshold) {
+					Gr[0] = p[0];
+					Gr[1] = p[1];
+					Gr[2] = p[2];
+				}
+				else {
 					pixel = 0;
-				
-				Gr[0] = (Byte)pixel;
-				Gr[1] = (Byte)pixel;
-				Gr[2] = (Byte)pixel;
+					Gr[0] = (Byte)pixel;
+					Gr[1] = (Byte)pixel;
+					Gr[2] = (Byte)pixel;
+				}
+					
 
 				// Move to next pixel
 				Gr += 3;
@@ -838,5 +948,6 @@ namespace imageprocessing {
 		// show it on the pictureBox
 		picture_box2->Image = threshImage;
 	}
-	};
+
+};
 }
