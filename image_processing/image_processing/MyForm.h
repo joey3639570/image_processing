@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include <algorithm>
 
 namespace imageprocessing {
@@ -48,6 +49,9 @@ namespace imageprocessing {
 	private: System::Windows::Forms::Button^ buttonMedian;
 	private: System::Windows::Forms::Button^ buttonHistogram;
 	private: System::Windows::Forms::Button^ buttonThreshold;
+	private: System::Windows::Forms::Button^ buttonSobelV;
+	private: System::Windows::Forms::Button^ buttonSobelH;
+	private: System::Windows::Forms::Button^ buttonSobelC;
 	private: System::Windows::Forms::TextBox^ textBoxThresh;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart2;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
@@ -82,6 +86,9 @@ namespace imageprocessing {
 			this->buttonMedian = (gcnew System::Windows::Forms::Button());
 			this->buttonHistogram = (gcnew System::Windows::Forms::Button());
 			this->buttonThreshold = (gcnew System::Windows::Forms::Button());
+			this->buttonSobelV = (gcnew System::Windows::Forms::Button());
+			this->buttonSobelH = (gcnew System::Windows::Forms::Button());
+			this->buttonSobelC = (gcnew System::Windows::Forms::Button());
 			this->textBoxThresh = (gcnew System::Windows::Forms::TextBox());
 			this->chart2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
@@ -211,35 +218,65 @@ namespace imageprocessing {
 			this->buttonThreshold->UseVisualStyleBackColor = true;
 			this->buttonThreshold->Click += gcnew System::EventHandler(this, &MyForm::buttonThreshold_Click);
 			// 
+			// buttonSobelV
+			// 
+			this->buttonSobelV->Location = System::Drawing::Point(544, 576);
+			this->buttonSobelV->Name = L"buttonSobelV";
+			this->buttonSobelV->Size = System::Drawing::Size(96, 32);
+			this->buttonSobelV->TabIndex = 11;
+			this->buttonSobelV->Text = L"Sobel Vertical";
+			this->buttonSobelV->UseVisualStyleBackColor = true;
+			this->buttonSobelV->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelV_Click);
+			// 
+			// buttonSobelH
+			// 
+			this->buttonSobelH->Location = System::Drawing::Point(544, 640);
+			this->buttonSobelH->Name = L"buttonSobelH";
+			this->buttonSobelH->Size = System::Drawing::Size(96, 32);
+			this->buttonSobelH->TabIndex = 11;
+			this->buttonSobelH->Text = L"Sobel Horizontal";
+			this->buttonSobelH->UseVisualStyleBackColor = true;
+			this->buttonSobelH->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelH_Click);
+			// 
+			// buttonSobelC
+			// 
+			this->buttonSobelC->Location = System::Drawing::Point(544, 704);
+			this->buttonSobelC->Name = L"buttonSobelC";
+			this->buttonSobelC->Size = System::Drawing::Size(96, 32);
+			this->buttonSobelC->TabIndex = 11;
+			this->buttonSobelC->Text = L"Sobel Combined";
+			this->buttonSobelC->UseVisualStyleBackColor = true;
+			this->buttonSobelC->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelC_Click);
+			// 
 			// textBoxThresh
 			// 
-			this->textBoxThresh->Location = System::Drawing::Point(32, 704);
+			this->textBoxThresh->Location = System::Drawing::Point(32, 640);
 			this->textBoxThresh->Name = L"textBoxThresh";
 			this->textBoxThresh->Size = System::Drawing::Size(96, 22);
 			this->textBoxThresh->TabIndex = 12;
 			// 
 			// chart2
 			// 
-			chartArea1->Name = L"ChartArea2";
-			this->chart2->ChartAreas->Add(chartArea1);
+			chartArea2->Name = L"ChartArea2";
+			this->chart2->ChartAreas->Add(chartArea2);
 			this->chart2->Location = System::Drawing::Point(713, 657);
 			this->chart2->Name = L"chart2";
-			series1->ChartArea = L"ChartArea2";
-			series1->Name = L"Series1";
-			this->chart2->Series->Add(series1);
+			series2->ChartArea = L"ChartArea2";
+			series2->Name = L"Series2";
+			this->chart2->Series->Add(series2);
 			this->chart2->Size = System::Drawing::Size(279, 101);
 			this->chart2->TabIndex = 14;
 			this->chart2->Text = L"chart2";
 			// 
 			// chart1
 			// 
-			chartArea2->Name = L"ChartArea1";
-			this->chart1->ChartAreas->Add(chartArea2);
+			chartArea1->Name = L"ChartArea1";
+			this->chart1->ChartAreas->Add(chartArea1);
 			this->chart1->Location = System::Drawing::Point(713, 551);
 			this->chart1->Name = L"chart1";
-			series2->ChartArea = L"ChartArea1";
-			series2->Name = L"Series1";
-			this->chart1->Series->Add(series2);
+			series1->ChartArea = L"ChartArea1";
+			series1->Name = L"Series1";
+			this->chart1->Series->Add(series1);
 			this->chart1->Size = System::Drawing::Size(279, 101);
 			this->chart1->TabIndex = 15;
 			this->chart1->Text = L"chart1";
@@ -263,6 +300,9 @@ namespace imageprocessing {
 			this->Controls->Add(this->buttonMedian);
 			this->Controls->Add(this->buttonHistogram);
 			this->Controls->Add(this->buttonThreshold);
+			this->Controls->Add(this->buttonSobelV);
+			this->Controls->Add(this->buttonSobelH);
+			this->Controls->Add(this->buttonSobelC);
 			this->Controls->Add(this->textBoxThresh);
 			this->Name = L"MyForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->EndInit();
@@ -285,6 +325,7 @@ namespace imageprocessing {
 		// int pointer for calculation
 		IntPtr ptr, GrayResultPtr, RedResultPtr, GreenResultPtr, BlueResultPtr;
 		IntPtr meanResultPtr, medianResultPtr, histResultPtr, threshResultPtr;
+		IntPtr sobelVResultPtr, sobelHResultPtr, sobelCResultPtr;
 
 		// Byte pointer
 		Byte* p;
@@ -294,6 +335,9 @@ namespace imageprocessing {
 		Byte* B;
 		Byte* mean;
 		Byte* median;
+		Byte* sobelV;
+		Byte* sobelH;
+		Byte* sobelC;
 
 #pragma endregion
 	private: System::Void button1_click_1(System::Object^ sender, System::EventArgs^ e) {
@@ -819,8 +863,11 @@ namespace imageprocessing {
 		p = (Byte*)((Void*)ptr);
 
 		int histogram[256];
-		for (int i = 0; i < 256; i++)
+		int histogram_2[256];
+		for (int i = 0; i < 256; i++) {
 			histogram[i] = 0;
+			histogram_2[i] = 0;
+		}
 
 		// process all pixel
 		for (int y = 0; y < image1->Height; y++)
@@ -841,27 +888,20 @@ namespace imageprocessing {
 		int i = 0;
 		while (!histogram[i]) ++i;
 
-		// PDF Calculation
-		double pdf[256];
-		for (int i = 0; i < 256; i++)
-			pdf[i] = histogram[i] / (image1->Height * image1->Width);
-		// CDF Calculation
-		double s[256 - 1];
-		for (int i = 0; i < 256; i++){
-			int sum = 0;
-			for (int j = 0; j <= i; j++)
-				sum += pdf[j];
-			s[i] = 255 * sum;
-		}
 		int sum = 0;
 		int lut[256];
-		float scale = 255 / (image1->Height * image1->Width);
-		for (int i = 0; i < 256; ++i) {
+		float scale = (255 - 1.f) / (image1->Height * image1->Width - histogram[i]);
+		i++;
+		for(int j = 0; j < 256; ++j)
+			lut[j] = 0;
+		for (; i < 256; ++i) {
 			sum += histogram[i];
 			// the value is saturated in range [0, max_val]
-			lut[i] = std::max(0, std::min(int(round(sum * scale)), 255));
+			lut[i] = std::max(0, std::min(int(std::round(sum * scale)), 255));
 		}
 
+		// set int ptr to the front of the image
+		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
 		for (int y = 0; y < image1->Height; y++)
@@ -870,6 +910,7 @@ namespace imageprocessing {
 			{
 				int pixel = 0;
 				pixel = lut[p[0]];
+				histogram_2[pixel]++;
 
 				Gr[0] = (Byte)pixel;
 				Gr[1] = (Byte)pixel;
@@ -879,7 +920,10 @@ namespace imageprocessing {
 				p += 3;
 			}
 		}
-
+		// Draw histogram for original image
+		chart2->Series["Series2"]->Points->Clear();
+		for (int i = 0; i < 256; i++)
+			chart2->Series["Series2"]->Points->AddXY(i, histogram_2[i]);
 
 		// Unlock pixel
 		image1->UnlockBits(ImageData1);
@@ -949,5 +993,263 @@ namespace imageprocessing {
 		picture_box2->Image = threshImage;
 	}
 
+	private: System::Void buttonSobelV_Click(System::Object^ sender, System::EventArgs^ e) {
+		// Mean Filter
+
+		// declaration of BitMap object for results
+		Bitmap^ sobelVImage;
+		sobelVImage = gcnew Bitmap(image1->Width, image1->Height);
+
+		// declaration of BitMap object for pixels of results
+		Imaging::BitmapData^ sobelVImageData;
+
+		// Lock the image
+		sobelVImageData = sobelVImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+
+		// Gray, set int ptr to the front of the image
+		sobelVResultPtr = sobelVImageData->Scan0;
+		sobelV = (Byte*)((Void*)sobelVResultPtr);
+
+		// Lock the original image
+		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		// set int ptr to the front of the image
+		ptr = ImageData1->Scan0;
+		// ptr initialization
+		p = (Byte*)((Void*)ptr);
+
+		// process all pixel(without_boundary)
+		for (int y = 0; y < image1->Height + 1; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				// boundary cases
+				if (y == 0) {
+					int b_idx = 3 * x;
+					int g_idx = 3 * x + 1;
+					int r_idx = 3 * x + 2;
+					sobelV[b_idx] = p[b_idx];
+					sobelV[g_idx] = p[g_idx];
+					sobelV[r_idx] = p[r_idx];
+					continue;
+				}
+				else if (y == image1->Height || x == 0 || x == image1->Width - 1) {
+					int b_idx = 3 * x + 3 * image1->Width * (y - 1);
+					int g_idx = 3 * x + 3 * image1->Width * (y - 1) + 1;
+					int r_idx = 3 * x + 3 * image1->Width * (y - 1) + 2;
+					sobelV[b_idx] = p[b_idx];
+					sobelV[g_idx] = p[g_idx];
+					sobelV[r_idx] = p[r_idx];
+					continue;
+				}
+
+				// index setup
+				int top_left_idx = 3 * (x - 1) + 3 * image1->Width * (y - 1);
+				int top_idx = 3 * (x)+3 * image1->Width * (y - 1);
+				int top_right_idx = 3 * (x + 1) + 3 * image1->Width * (y - 1);
+				int left_idx = 3 * (x - 1) + 3 * image1->Width * (y);
+				int mid_idx = 3 * (x)+3 * image1->Width * (y);
+				int right_idx = 3 * (x + 1) + 3 * image1->Width * (y);
+				int bot_left_idx = 3 * (x - 1) + 3 * image1->Width * (y + 1);
+				int bot_idx = 3 * (x)+3 * image1->Width * (y + 1);
+				int bot_right_idx = 3 * (x + 1) + 3 * image1->Width * (y + 1);
+
+				// Sobel Vertical
+				int value = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx] - p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
+				if (value < 0)
+					value = 0;
+				else if (value > 255)
+					value = 255;
+
+				int b_sobelV = value;
+				int g_sobelV = value;
+				int r_sobelV = value;
+
+
+				// put averaged value into the result
+				sobelV[mid_idx] = (Byte)b_sobelV;
+				sobelV[mid_idx + 1] = (Byte)g_sobelV;
+				sobelV[mid_idx + 2] = (Byte)r_sobelV;
+
+			}
+		}
+
+		// Unlock pixel
+		image1->UnlockBits(ImageData1);
+		sobelVImage->UnlockBits(sobelVImageData);
+
+		// show it on the pictureBox
+		picture_box2->Image = sobelVImage;
+	}
+
+	private: System::Void buttonSobelH_Click(System::Object^ sender, System::EventArgs^ e) {
+		// Mean Filter
+
+		// declaration of BitMap object for results
+		Bitmap^ sobelHImage;
+		sobelHImage = gcnew Bitmap(image1->Width, image1->Height);
+
+		// declaration of BitMap object for pixels of results
+		Imaging::BitmapData^ sobelHImageData;
+
+		// Lock the image
+		sobelHImageData = sobelHImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+
+		// Gray, set int ptr to the front of the image
+		sobelHResultPtr = sobelHImageData->Scan0;
+		sobelH = (Byte*)((Void*)sobelHResultPtr);
+
+		// Lock the original image
+		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		// set int ptr to the front of the image
+		ptr = ImageData1->Scan0;
+		// ptr initialization
+		p = (Byte*)((Void*)ptr);
+
+		// process all pixel(without_boundary)
+		for (int y = 0; y < image1->Height + 1; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				// boundary cases
+				if (y == 0) {
+					int b_idx = 3 * x;
+					int g_idx = 3 * x + 1;
+					int r_idx = 3 * x + 2;
+					sobelH[b_idx] = p[b_idx];
+					sobelH[g_idx] = p[g_idx];
+					sobelH[r_idx] = p[r_idx];
+					continue;
+				}
+				else if (y == image1->Height || x == 0 || x == image1->Width - 1) {
+					int b_idx = 3 * x + 3 * image1->Width * (y - 1);
+					int g_idx = 3 * x + 3 * image1->Width * (y - 1) + 1;
+					int r_idx = 3 * x + 3 * image1->Width * (y - 1) + 2;
+					sobelH[b_idx] = p[b_idx];
+					sobelH[g_idx] = p[g_idx];
+					sobelH[r_idx] = p[r_idx];
+					continue;
+				}
+
+				// index setup
+				int top_left_idx = 3 * (x - 1) + 3 * image1->Width * (y - 1);
+				int top_idx = 3 * (x)+3 * image1->Width * (y - 1);
+				int top_right_idx = 3 * (x + 1) + 3 * image1->Width * (y - 1);
+				int left_idx = 3 * (x - 1) + 3 * image1->Width * (y);
+				int mid_idx = 3 * (x)+3 * image1->Width * (y);
+				int right_idx = 3 * (x + 1) + 3 * image1->Width * (y);
+				int bot_left_idx = 3 * (x - 1) + 3 * image1->Width * (y + 1);
+				int bot_idx = 3 * (x)+3 * image1->Width * (y + 1);
+				int bot_right_idx = 3 * (x + 1) + 3 * image1->Width * (y + 1);
+
+				// Sobel Horizontal
+				int value = (p[top_left_idx] - p[top_right_idx]+ 2 * p[left_idx] - 2 * p[right_idx] + 2 * p[bot_left_idx] - p[bot_right_idx]);
+				if (value < 0)
+					value = 0;
+				else if (value > 255)
+					value = 255;
+
+				int b_sobelH = value;
+				int g_sobelH = value;
+				int r_sobelH = value;
+
+				// put averaged value into the result
+				sobelH[mid_idx] = (Byte)b_sobelH;
+				sobelH[mid_idx + 1] = (Byte)g_sobelH;
+				sobelH[mid_idx + 2] = (Byte)r_sobelH;
+
+			}
+		}
+
+		// Unlock pixel
+		image1->UnlockBits(ImageData1);
+		sobelHImage->UnlockBits(sobelHImageData);
+
+		// show it on the pictureBox
+		picture_box2->Image = sobelHImage;
+	}
+
+	private: System::Void buttonSobelC_Click(System::Object^ sender, System::EventArgs^ e) {
+		// Mean Filter
+
+		// declaration of BitMap object for results
+		Bitmap^ sobelCImage;
+		sobelCImage = gcnew Bitmap(image1->Width, image1->Height);
+
+		// declaration of BitMap object for pixels of results
+		Imaging::BitmapData^ sobelCImageData;
+
+		// Lock the image
+		sobelCImageData = sobelCImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+
+		// Gray, set int ptr to the front of the image
+		sobelCResultPtr = sobelCImageData->Scan0;
+		sobelC = (Byte*)((Void*)sobelCResultPtr);
+
+		// Lock the original image
+		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		// set int ptr to the front of the image
+		ptr = ImageData1->Scan0;
+		// ptr initialization
+		p = (Byte*)((Void*)ptr);
+
+		// process all pixel(without_boundary)
+		for (int y = 0; y < image1->Height + 1; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				// boundary cases
+				if (y == 0) {
+					int b_idx = 3 * x;
+					int g_idx = 3 * x + 1;
+					int r_idx = 3 * x + 2;
+					sobelC[b_idx] = p[b_idx];
+					sobelC[g_idx] = p[g_idx];
+					sobelC[r_idx] = p[r_idx];
+					continue;
+				}
+				else if (y == image1->Height || x == 0 || x == image1->Width - 1) {
+					int b_idx = 3 * x + 3 * image1->Width * (y - 1);
+					int g_idx = 3 * x + 3 * image1->Width * (y - 1) + 1;
+					int r_idx = 3 * x + 3 * image1->Width * (y - 1) + 2;
+					sobelC[b_idx] = p[b_idx];
+					sobelC[g_idx] = p[g_idx];
+					sobelC[r_idx] = p[r_idx];
+					continue;
+				}
+
+				// index setup
+				int top_left_idx = 3 * (x - 1) + 3 * image1->Width * (y - 1);
+				int top_idx = 3 * (x)+3 * image1->Width * (y - 1);
+				int top_right_idx = 3 * (x + 1) + 3 * image1->Width * (y - 1);
+				int left_idx = 3 * (x - 1) + 3 * image1->Width * (y);
+				int mid_idx = 3 * (x)+3 * image1->Width * (y);
+				int right_idx = 3 * (x + 1) + 3 * image1->Width * (y);
+				int bot_left_idx = 3 * (x - 1) + 3 * image1->Width * (y + 1);
+				int bot_idx = 3 * (x)+3 * image1->Width * (y + 1);
+				int bot_right_idx = 3 * (x + 1) + 3 * image1->Width * (y + 1);
+
+				// Sobel Vertical
+				int b_sobelC = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx]
+					- p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
+				int g_sobelC = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx]
+					- p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
+				int r_sobelC = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx]
+					- p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
+
+				// put averaged value into the result
+				sobelC[mid_idx] = (Byte)b_sobelC;
+				sobelC[mid_idx + 1] = (Byte)g_sobelC;
+				sobelC[mid_idx + 2] = (Byte)r_sobelC;
+
+			}
+		}
+
+		// Unlock pixel
+		image1->UnlockBits(ImageData1);
+		sobelCImage->UnlockBits(sobelCImageData);
+
+		// show it on the pictureBox
+		picture_box2->Image = sobelCImage;
+	}
 };
 }

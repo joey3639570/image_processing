@@ -1,5 +1,3 @@
 ﻿  MyForm.cpp
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(853,1): warning C4244: '+=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(858,15): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
   MyForm.obj : 發現 MSIL 模組。MSIL 的累加連結已停用。正在執行完整連結
   image_processing.vcxproj -> C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\Debug\image_processing.exe
