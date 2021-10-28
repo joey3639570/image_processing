@@ -52,6 +52,7 @@ namespace imageprocessing {
 	private: System::Windows::Forms::Button^ buttonSobelV;
 	private: System::Windows::Forms::Button^ buttonSobelH;
 	private: System::Windows::Forms::Button^ buttonSobelC;
+	private: System::Windows::Forms::Button^ buttonConnected;
 	private: System::Windows::Forms::TextBox^ textBoxThresh;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart2;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
@@ -88,6 +89,8 @@ namespace imageprocessing {
 			this->buttonSobelV = (gcnew System::Windows::Forms::Button());
 			this->buttonSobelH = (gcnew System::Windows::Forms::Button());
 			this->buttonSobelC = (gcnew System::Windows::Forms::Button());
+			this->buttonOverlap = (gcnew System::Windows::Forms::Button());
+			this->buttonConnected = (gcnew System::Windows::Forms::Button());
 			this->textBoxThresh = (gcnew System::Windows::Forms::TextBox());
 			this->chart2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
@@ -248,11 +251,31 @@ namespace imageprocessing {
 			this->buttonSobelC->UseVisualStyleBackColor = true;
 			this->buttonSobelC->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelC_Click);
 			// 
+			// buttonOverlap
+			// 
+			this->buttonOverlap->Location = System::Drawing::Point(544, 768);
+			this->buttonOverlap->Name = L"buttonOverlap";
+			this->buttonOverlap->Size = System::Drawing::Size(96, 32);
+			this->buttonOverlap->TabIndex = 11;
+			this->buttonOverlap->Text = L"Sobel Overlap";
+			this->buttonOverlap->UseVisualStyleBackColor = true;
+			this->buttonOverlap->Click += gcnew System::EventHandler(this, &MyForm::buttonOverlap_Click);
+			// 
+			// buttonConnected
+			// 
+			this->buttonConnected->Location = System::Drawing::Point(32, 768);
+			this->buttonConnected->Name = L"buttonConnected";
+			this->buttonConnected->Size = System::Drawing::Size(96, 32);
+			this->buttonConnected->TabIndex = 11;
+			this->buttonConnected->Text = L"Connected Components";
+			this->buttonConnected->UseVisualStyleBackColor = true;
+			this->buttonConnected->Click += gcnew System::EventHandler(this, &MyForm::buttonConnected_Click);
+			// 
 			// textBoxThresh
 			// 
 			this->textBoxThresh->Location = System::Drawing::Point(32, 704);
 			this->textBoxThresh->Name = L"textBoxThresh";
-			this->textBoxThresh->Size = System::Drawing::Size(96, 22);
+			this->textBoxThresh->Size = System::Drawing::Size(96, 32);
 			this->textBoxThresh->TabIndex = 12;
 			// 
 			// chart2
@@ -294,7 +317,7 @@ namespace imageprocessing {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1024, 768);
+			this->ClientSize = System::Drawing::Size(1024, 1024);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->chart1);
 			this->Controls->Add(this->chart2);
@@ -313,6 +336,8 @@ namespace imageprocessing {
 			this->Controls->Add(this->buttonSobelV);
 			this->Controls->Add(this->buttonSobelH);
 			this->Controls->Add(this->buttonSobelC);
+			this->Controls->Add(this->buttonOverlap);
+			this->Controls->Add(this->buttonConnected);
 			this->Controls->Add(this->textBoxThresh);
 			this->Name = L"MyForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->EndInit();
@@ -336,6 +361,7 @@ namespace imageprocessing {
 		IntPtr ptr, GrayResultPtr, RedResultPtr, GreenResultPtr, BlueResultPtr;
 		IntPtr meanResultPtr, medianResultPtr, histResultPtr, threshResultPtr;
 		IntPtr sobelVResultPtr, sobelHResultPtr, sobelCResultPtr;
+		IntPtr connectedPtr, OverlapPtr;
 
 		// Byte pointer
 		Byte* p;
@@ -348,6 +374,8 @@ namespace imageprocessing {
 		Byte* sobelV;
 		Byte* sobelH;
 		Byte* sobelC;
+		Byte* connected;
+		Byte* Overlap;
 
 #pragma endregion
 	private: System::Void button1_click_1(System::Object^ sender, System::EventArgs^ e) {
@@ -991,9 +1019,10 @@ namespace imageprocessing {
 				int pixel;
 				// Threshold filter
 				if (p[0] > threshold || p[1] > threshold || p[2] > threshold) {
-					Gr[0] = p[0];
-					Gr[1] = p[1];
-					Gr[2] = p[2];
+					pixel = 255;
+					Gr[0] = (Byte)pixel;
+					Gr[1] = (Byte)pixel;
+					Gr[2] = (Byte)pixel;
 				}
 				else {
 					pixel = 0;
@@ -1040,62 +1069,51 @@ namespace imageprocessing {
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
+		
+		// Byte ptr array
+		Byte* r[9]; 
+
+		// Array for pixel value and pixel index
+		int Array[9] = { 0 };
 	
-		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height + 1; y++)
+		for (int y = 0; y < image1->Height; y++) 
 		{
-			for (int x = 0; x < image1->Width; x++)
+			for (int x = 0; x < image1->Width; x++) 
 			{
-				// boundary cases
-				if (y == 0) {
-					int b_idx = 3 * x;
-					int g_idx = 3 * x + 1;
-					int r_idx = 3 * x + 2;
-					sobelV[b_idx] = p[b_idx];
-					sobelV[g_idx] = p[g_idx];
-					sobelV[r_idx] = p[r_idx];
-					continue;
+				// not dealing with boundary cases
+				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
+				{
+					int Masksize = 0;
+					//save pixel value for calculating
+					for (int i = -1; i <= 1; i++)
+					{
+						for (int j = -3; j <= 3; j += 3)
+						{
+							// point the ptr to the target
+							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
+							// save pixel
+							Array[Masksize] = r[Masksize][0] + r[Masksize][1] + r[Masksize][2];
+							Masksize++;
+						}
+					}
+					int value = Array[0] + 2 * Array[1] + Array[2] - Array[6] - 2 * Array[7] - Array[8];
+				
+
+					sobelV[0] = value;
+					sobelV[1] = value;
+					sobelV[2] = value;
 				}
-				else if (y == image1->Height || x == 0 || x == image1->Width - 1) {
-					int b_idx = 3 * x + 3 * image1->Width * (y - 1);
-					int g_idx = 3 * x + 3 * image1->Width * (y - 1) + 1;
-					int r_idx = 3 * x + 3 * image1->Width * (y - 1) + 2;
-					sobelV[b_idx] = p[b_idx];
-					sobelV[g_idx] = p[g_idx];
-					sobelV[r_idx] = p[r_idx];
-					continue;
+				else
+				{
+					sobelV[0] = p[0];
+					sobelV[1] = p[1];
+					sobelV[2] = p[2];
 				}
-
-				// index setup
-				int top_left_idx = 3 * (x - 1) + 3 * image1->Width * (y - 1);
-				int top_idx = 3 * (x)+3 * image1->Width * (y - 1);
-				int top_right_idx = 3 * (x + 1) + 3 * image1->Width * (y - 1);
-				int left_idx = 3 * (x - 1) + 3 * image1->Width * (y);
-				int mid_idx = 3 * (x)+3 * image1->Width * (y);
-				int right_idx = 3 * (x + 1) + 3 * image1->Width * (y);
-				int bot_left_idx = 3 * (x - 1) + 3 * image1->Width * (y + 1);
-				int bot_idx = 3 * (x)+3 * image1->Width * (y + 1);
-				int bot_right_idx = 3 * (x + 1) + 3 * image1->Width * (y + 1);
-
-				// Sobel Vertical
-				int value = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx] - p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
-				if (value < 0)
-					value = 0;
-				else if (value > 255)
-					value = 255;
-
-				int b_sobelV = value;
-				int g_sobelV = value;
-				int r_sobelV = value;
-
-
-				// put averaged value into the result
-				sobelV[mid_idx] = (Byte)b_sobelV;
-				sobelV[mid_idx + 1] = (Byte)g_sobelV;
-				sobelV[mid_idx + 2] = (Byte)r_sobelV;
-
+				sobelV += 3;
+				p += 3;
 			}
 		}
+
 
 		// Unlock pixel
 		image1->UnlockBits(ImageData1);
@@ -1128,59 +1146,48 @@ namespace imageprocessing {
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
+		
+		// Byte ptr array
+		Byte* r[9]; 
 
-		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height + 1; y++)
+		// Array for pixel value
+		int Array[9] = { 0 };
+	
+		for (int y = 0; y < image1->Height; y++) 
 		{
-			for (int x = 0; x < image1->Width; x++)
+			for (int x = 0; x < image1->Width; x++) 
 			{
-				// boundary cases
-				if (y == 0) {
-					int b_idx = 3 * x;
-					int g_idx = 3 * x + 1;
-					int r_idx = 3 * x + 2;
-					sobelH[b_idx] = p[b_idx];
-					sobelH[g_idx] = p[g_idx];
-					sobelH[r_idx] = p[r_idx];
-					continue;
+				// not dealing with boundary cases
+				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
+				{
+					int Masksize = 0;
+					//save pixel value for calculating
+					for (int i = -1; i <= 1; i++)
+					{
+						for (int j = -3; j <= 3; j += 3)
+						{
+							// point the ptr to the target
+							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
+							// save pixel
+							Array[Masksize] = r[Masksize][0] + r[Masksize][1] + r[Masksize][2];
+							Masksize++;
+						}
+					}
+					int value = Array[0] - Array[2] + 2 * Array[3] - 2 * Array[5] + Array[6] - Array[8];
+				
+
+					sobelH[0] = value;
+					sobelH[1] = value;
+					sobelH[2] = value;
 				}
-				else if (y == image1->Height || x == 0 || x == image1->Width - 1) {
-					int b_idx = 3 * x + 3 * image1->Width * (y - 1);
-					int g_idx = 3 * x + 3 * image1->Width * (y - 1) + 1;
-					int r_idx = 3 * x + 3 * image1->Width * (y - 1) + 2;
-					sobelH[b_idx] = p[b_idx];
-					sobelH[g_idx] = p[g_idx];
-					sobelH[r_idx] = p[r_idx];
-					continue;
+				else
+				{
+					sobelH[0] = p[0];
+					sobelH[1] = p[1];
+					sobelH[2] = p[2];
 				}
-
-				// index setup
-				int top_left_idx = 3 * (x - 1) + 3 * image1->Width * (y - 1);
-				int top_idx = 3 * (x)+3 * image1->Width * (y - 1);
-				int top_right_idx = 3 * (x + 1) + 3 * image1->Width * (y - 1);
-				int left_idx = 3 * (x - 1) + 3 * image1->Width * (y);
-				int mid_idx = 3 * (x)+3 * image1->Width * (y);
-				int right_idx = 3 * (x + 1) + 3 * image1->Width * (y);
-				int bot_left_idx = 3 * (x - 1) + 3 * image1->Width * (y + 1);
-				int bot_idx = 3 * (x)+3 * image1->Width * (y + 1);
-				int bot_right_idx = 3 * (x + 1) + 3 * image1->Width * (y + 1);
-
-				// Sobel Horizontal
-				int value = (p[top_left_idx] - p[top_right_idx]+ 2 * p[left_idx] - 2 * p[right_idx] + 2 * p[bot_left_idx] - p[bot_right_idx]);
-				if (value < 0)
-					value = 0;
-				else if (value > 255)
-					value = 255;
-
-				int b_sobelH = value;
-				int g_sobelH = value;
-				int r_sobelH = value;
-
-				// put averaged value into the result
-				sobelH[mid_idx] = (Byte)b_sobelH;
-				sobelH[mid_idx + 1] = (Byte)g_sobelH;
-				sobelH[mid_idx + 2] = (Byte)r_sobelH;
-
+				sobelH += 3;
+				p += 3;
 			}
 		}
 
@@ -1215,56 +1222,50 @@ namespace imageprocessing {
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
+		
 
-		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height + 1; y++)
+		// Byte ptr array
+		Byte* r[9]; 
+
+		// Array for pixel value and pixel index
+		int Array[9] = { 0 };
+	
+		for (int y = 0; y < image1->Height; y++) 
 		{
-			for (int x = 0; x < image1->Width; x++)
+			for (int x = 0; x < image1->Width; x++) 
 			{
-				// boundary cases
-				if (y == 0) {
-					int b_idx = 3 * x;
-					int g_idx = 3 * x + 1;
-					int r_idx = 3 * x + 2;
-					sobelC[b_idx] = p[b_idx];
-					sobelC[g_idx] = p[g_idx];
-					sobelC[r_idx] = p[r_idx];
-					continue;
+				// not dealing with boundary cases
+				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
+				{
+					int Masksize = 0;
+					//save pixel value for calculating
+					for (int i = -1; i <= 1; i++)
+					{
+						for (int j = -3; j <= 3; j += 3)
+						{
+							// point the ptr to the target
+							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
+							// save pixel
+							Array[Masksize] = r[Masksize][0] + r[Masksize][1] + r[Masksize][2];
+							Masksize++;
+						}
+					}
+					int value_v = Array[0] + 2 * Array[1] + Array[2] - Array[6] - 2 * Array[7] - Array[8];
+					int value_h = Array[0] - Array[2] + 2 * Array[3] - 2 * Array[5] + Array[6] - Array[8];
+					int value = value_v + value_h;
+
+					sobelC[0] = value;
+					sobelC[1] = value;
+					sobelC[2] = value;
 				}
-				else if (y == image1->Height || x == 0 || x == image1->Width - 1) {
-					int b_idx = 3 * x + 3 * image1->Width * (y - 1);
-					int g_idx = 3 * x + 3 * image1->Width * (y - 1) + 1;
-					int r_idx = 3 * x + 3 * image1->Width * (y - 1) + 2;
-					sobelC[b_idx] = p[b_idx];
-					sobelC[g_idx] = p[g_idx];
-					sobelC[r_idx] = p[r_idx];
-					continue;
+				else
+				{
+					sobelC[0] = p[0];
+					sobelC[1] = p[1];
+					sobelC[2] = p[2];
 				}
-
-				// index setup
-				int top_left_idx = 3 * (x - 1) + 3 * image1->Width * (y - 1);
-				int top_idx = 3 * (x)+3 * image1->Width * (y - 1);
-				int top_right_idx = 3 * (x + 1) + 3 * image1->Width * (y - 1);
-				int left_idx = 3 * (x - 1) + 3 * image1->Width * (y);
-				int mid_idx = 3 * (x)+3 * image1->Width * (y);
-				int right_idx = 3 * (x + 1) + 3 * image1->Width * (y);
-				int bot_left_idx = 3 * (x - 1) + 3 * image1->Width * (y + 1);
-				int bot_idx = 3 * (x)+3 * image1->Width * (y + 1);
-				int bot_right_idx = 3 * (x + 1) + 3 * image1->Width * (y + 1);
-
-				// Sobel Vertical
-				int b_sobelC = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx]
-					- p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
-				int g_sobelC = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx]
-					- p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
-				int r_sobelC = (p[top_left_idx] + 2 * p[top_idx] + p[top_right_idx]
-					- p[bot_left_idx] - 2 * p[bot_idx] - p[bot_right_idx]);
-
-				// put averaged value into the result
-				sobelC[mid_idx] = (Byte)b_sobelC;
-				sobelC[mid_idx + 1] = (Byte)g_sobelC;
-				sobelC[mid_idx + 2] = (Byte)r_sobelC;
-
+				sobelC += 3;
+				p += 3;
 			}
 		}
 
@@ -1275,6 +1276,75 @@ namespace imageprocessing {
 		// show it on the pictureBox
 		picture_box2->Image = sobelCImage;
 	}
+	
+	private: System::Void buttonOverlap_Click(System::Object^ sender, System::EventArgs^ e) {
 
+		// Image area
+		Rectangle rect;
+		//³]©wrect
+		rect = Rectangle(0, 0, image1->Width, image1->Height);
+		
+		// declaration of BitMap object for results
+		Bitmap^ overlapImage;
+		overlapImage = image1.clone(rect, image1->PixelFormat)
+		
+		Bitmap^ topImage;
+		topImage = picture_box2->Image.clone(rect, image1->PixelFormat)
+
+		Color Px;
+
+		for (int y = 0; y < image1->Height; y++) 
+		{
+			for (int x = 0; x < image1->Width; x++) 
+			{
+				if (topImage->GetPixel(x, y).R == 255)
+					overlapImage->SetPixel(x, y, Px.FromArgb(0, 255, 0));
+			}
+		}
+
+		// show it on the pictureBox
+		picture_box2->Image = overlapImage;
+	}
+	
+
+	private: System::Void buttonConnected_Click(System::Object^ sender, System::EventArgs^ e) {
+		// Threshold Filter 
+
+		// declaration of BitMap object for results
+		Bitmap^ connectedImage;
+		connectedImage = gcnew Bitmap(image1->Width, image1->Height);
+		
+		// labeling conneceted components
+		int noElem = 0;
+
+		for (int y = 0; y < image1->Height; y++) 
+		{
+			for (int x = 0; x < image1->Width; x++) 
+			{
+				if ((image1->GetPixel(x, y).R != 0) && (connectedImage->GetPixel(x, y).R == 0))
+					recursiveFinder(x, y, ++noElem, image1, connectedImage);
+			}
+		}
+		
+
+		// show it on the pictureBox
+		picture_box2->Image = connectedImage;
+		label1->Text = String::Format("Number of Components : {0}", noElem);
+	}
+	private: System:: connectedComponents(int row, int col, int current_label, Bitmap^ bmp, Bitmap^ bmpTmp)
+	{
+		if (row < 0 || row == bmpTmp->Width) return;
+		if (col < 0 || col == bmpTmp->Height) return;
+		if ((bmp->GetPixel(row, col).R == 0) || (bmpTmp->GetPixel(row, col).R != 0)) return;
+
+		Color Px;
+		const int dx[] = { +1, 0, -1, 0, -1, 1, 1, -1 };
+		const int dy[] = { 0, +1, 0, -1, -1, 1, -1, 1 };
+
+		bmpTmp->SetPixel(row, col, Px.FromArgb(current_label, current_label, current_label));
+
+		for (int direction = 0; direction < 8; ++direction)
+			recursiveFinder(row + dx[direction], col + dy[direction], current_label, bmp, bmpTmp);
+	}
 };
 }
