@@ -55,6 +55,7 @@ namespace imageprocessing {
 	private: System::Windows::Forms::TextBox^ textBoxThresh;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart2;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
+	private: System::Windows::Forms::Label^ label1;
 	private:
 		/// <summary>
 		/// 設計工具所需的變數。
@@ -69,10 +70,8 @@ namespace imageprocessing {
 		void InitializeComponent(void)
 		{
 			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Legend^ legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
 			System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Legend^ legend2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
 			System::Windows::Forms::DataVisualization::Charting::Series^ series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->picture_box1 = (gcnew System::Windows::Forms::PictureBox());
@@ -92,6 +91,7 @@ namespace imageprocessing {
 			this->textBoxThresh = (gcnew System::Windows::Forms::TextBox());
 			this->chart2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart2))->BeginInit();
@@ -250,42 +250,52 @@ namespace imageprocessing {
 			// 
 			// textBoxThresh
 			// 
-			this->textBoxThresh->Location = System::Drawing::Point(32, 640);
+			this->textBoxThresh->Location = System::Drawing::Point(32, 704);
 			this->textBoxThresh->Name = L"textBoxThresh";
 			this->textBoxThresh->Size = System::Drawing::Size(96, 22);
 			this->textBoxThresh->TabIndex = 12;
 			// 
 			// chart2
 			// 
-			chartArea2->Name = L"ChartArea2";
-			this->chart2->ChartAreas->Add(chartArea2);
+			chartArea1->Name = L"ChartArea2";
+			this->chart2->ChartAreas->Add(chartArea1);
 			this->chart2->Location = System::Drawing::Point(713, 657);
 			this->chart2->Name = L"chart2";
-			series2->ChartArea = L"ChartArea2";
-			series2->Name = L"Series2";
-			this->chart2->Series->Add(series2);
+			series1->ChartArea = L"ChartArea2";
+			series1->Name = L"Series2";
+			this->chart2->Series->Add(series1);
 			this->chart2->Size = System::Drawing::Size(279, 101);
 			this->chart2->TabIndex = 14;
 			this->chart2->Text = L"chart2";
 			// 
 			// chart1
 			// 
-			chartArea1->Name = L"ChartArea1";
-			this->chart1->ChartAreas->Add(chartArea1);
+			chartArea2->Name = L"ChartArea1";
+			this->chart1->ChartAreas->Add(chartArea2);
 			this->chart1->Location = System::Drawing::Point(713, 551);
 			this->chart1->Name = L"chart1";
-			series1->ChartArea = L"ChartArea1";
-			series1->Name = L"Series1";
-			this->chart1->Series->Add(series1);
+			series2->ChartArea = L"ChartArea1";
+			series2->Name = L"Series1";
+			this->chart1->Series->Add(series2);
 			this->chart1->Size = System::Drawing::Size(279, 101);
 			this->chart1->TabIndex = 15;
 			this->chart1->Text = L"chart1";
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(32, 479);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(33, 12);
+			this->label1->TabIndex = 16;
+			this->label1->Text = L"PixelFormat";
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1024, 768);
+			this->Controls->Add(this->label1);
 			this->Controls->Add(this->chart1);
 			this->Controls->Add(this->chart2);
 			this->Controls->Add(this->picture_box1);
@@ -362,6 +372,7 @@ namespace imageprocessing {
 			rect = Rectangle(0, 0, image1->Width, image1->Height);
 			//將影像顯示在picture_box1
 			picture_box1->Image = image1;
+			label1->Text = String::Format("Pixel format: {0}", image1->PixelFormat);
 		}
 	}
 	private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -683,6 +694,15 @@ namespace imageprocessing {
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
+		
+		int total = 0;
+		for (int y = 0; y < image1->Height + 1; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				total++;
+			}
+		}
 
 		// process all pixel(without_boundary)
 		for (int y = 0; y < image1->Height+1; y++)
@@ -720,8 +740,12 @@ namespace imageprocessing {
 				int bot_idx 		= 3*(x)   + 3 * image1->Width * (y+1);
 				int bot_right_idx 	= 3*(x+1) + 3 * image1->Width * (y+1);
 				
+				label1->Text = String::Format("total pixel: {0}, top_left_idx: {1}", total, top_left_idx);
+
 				// mean_filter
-				int b_mean = (p[top_left_idx] + p[top_idx] + p[top_right_idx]
+				int b_mean = (p[top_left_idx] + 
+					p[top_idx] + 
+					p[top_right_idx]
 					+ p[left_idx] + p[mid_idx] + p[right_idx]
 					+ p[bot_left_idx] + p[bot_idx] + p[bot_right_idx]) / 9;
 				int g_mean = (p[top_left_idx + 1] + p[top_idx + 1] + p[top_right_idx + 1]
@@ -1016,7 +1040,7 @@ namespace imageprocessing {
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
-
+	
 		// process all pixel(without_boundary)
 		for (int y = 0; y < image1->Height + 1; y++)
 		{
@@ -1251,5 +1275,6 @@ namespace imageprocessing {
 		// show it on the pictureBox
 		picture_box2->Image = sobelCImage;
 	}
+
 };
 }
