@@ -62,6 +62,16 @@ namespace imageprocessing {
 	private: System::Windows::Forms::Label^ label1;
 	private: array< Bitmap^ >^ image_list = gcnew array< Bitmap^ >(30);
 	private: int image_list_idx = 0;
+	private: System::Windows::Forms::GroupBox^ groupBox1;
+	private: System::Windows::Forms::GroupBox^ groupBox2;
+	private: System::Windows::Forms::GroupBox^ groupBox3;
+	private: System::Windows::Forms::GroupBox^ groupBox4;
+	private: System::Windows::Forms::Label^ label2;
+	private: System::Windows::Forms::Label^ label3;
+	private: System::Windows::Forms::Label^ label4;
+	private: System::Windows::Forms::Label^ label5;
+	private: System::Windows::Forms::Label^ label6;
+
 	private:
 		/// <summary>
 		/// 設計工具所需的變數。
@@ -101,15 +111,28 @@ namespace imageprocessing {
 			this->chart2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label6 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->BeginInit();
+			this->groupBox1->SuspendLayout();
+			this->groupBox2->SuspendLayout();
+			this->groupBox3->SuspendLayout();
+			this->groupBox4->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(192, 512);
+			this->button1->Location = System::Drawing::Point(192, 484);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(128, 32);
 			this->button1->TabIndex = 0;
@@ -129,7 +152,7 @@ namespace imageprocessing {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(704, 512);
+			this->button2->Location = System::Drawing::Point(704, 484);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(128, 32);
 			this->button2->TabIndex = 2;
@@ -149,7 +172,7 @@ namespace imageprocessing {
 			// 
 			// buttonRed
 			// 
-			this->buttonRed->Location = System::Drawing::Point(32, 576);
+			this->buttonRed->Location = System::Drawing::Point(7, 27);
 			this->buttonRed->Name = L"buttonRed";
 			this->buttonRed->Size = System::Drawing::Size(96, 32);
 			this->buttonRed->TabIndex = 4;
@@ -159,7 +182,7 @@ namespace imageprocessing {
 			// 
 			// buttonBlue
 			// 
-			this->buttonBlue->Location = System::Drawing::Point(32, 640);
+			this->buttonBlue->Location = System::Drawing::Point(7, 91);
 			this->buttonBlue->Name = L"buttonBlue";
 			this->buttonBlue->Size = System::Drawing::Size(96, 32);
 			this->buttonBlue->TabIndex = 5;
@@ -169,7 +192,7 @@ namespace imageprocessing {
 			// 
 			// buttonGreen
 			// 
-			this->buttonGreen->Location = System::Drawing::Point(160, 576);
+			this->buttonGreen->Location = System::Drawing::Point(135, 27);
 			this->buttonGreen->Name = L"buttonGreen";
 			this->buttonGreen->Size = System::Drawing::Size(96, 32);
 			this->buttonGreen->TabIndex = 6;
@@ -179,7 +202,7 @@ namespace imageprocessing {
 			// 
 			// buttonGray
 			// 
-			this->buttonGray->Location = System::Drawing::Point(160, 640);
+			this->buttonGray->Location = System::Drawing::Point(135, 91);
 			this->buttonGray->Name = L"buttonGray";
 			this->buttonGray->Size = System::Drawing::Size(96, 32);
 			this->buttonGray->TabIndex = 7;
@@ -189,7 +212,7 @@ namespace imageprocessing {
 			// 
 			// buttonMean
 			// 
-			this->buttonMean->Location = System::Drawing::Point(288, 576);
+			this->buttonMean->Location = System::Drawing::Point(6, 26);
 			this->buttonMean->Name = L"buttonMean";
 			this->buttonMean->Size = System::Drawing::Size(96, 32);
 			this->buttonMean->TabIndex = 8;
@@ -199,7 +222,7 @@ namespace imageprocessing {
 			// 
 			// buttonMedian
 			// 
-			this->buttonMedian->Location = System::Drawing::Point(288, 640);
+			this->buttonMedian->Location = System::Drawing::Point(6, 90);
 			this->buttonMedian->Name = L"buttonMedian";
 			this->buttonMedian->Size = System::Drawing::Size(96, 32);
 			this->buttonMedian->TabIndex = 9;
@@ -219,7 +242,7 @@ namespace imageprocessing {
 			// 
 			// buttonThreshold
 			// 
-			this->buttonThreshold->Location = System::Drawing::Point(160, 704);
+			this->buttonThreshold->Location = System::Drawing::Point(5, 14);
 			this->buttonThreshold->Name = L"buttonThreshold";
 			this->buttonThreshold->Size = System::Drawing::Size(96, 32);
 			this->buttonThreshold->TabIndex = 11;
@@ -229,7 +252,7 @@ namespace imageprocessing {
 			// 
 			// buttonSobelV
 			// 
-			this->buttonSobelV->Location = System::Drawing::Point(416, 576);
+			this->buttonSobelV->Location = System::Drawing::Point(11, 27);
 			this->buttonSobelV->Name = L"buttonSobelV";
 			this->buttonSobelV->Size = System::Drawing::Size(96, 32);
 			this->buttonSobelV->TabIndex = 11;
@@ -239,7 +262,7 @@ namespace imageprocessing {
 			// 
 			// buttonSobelH
 			// 
-			this->buttonSobelH->Location = System::Drawing::Point(416, 640);
+			this->buttonSobelH->Location = System::Drawing::Point(11, 91);
 			this->buttonSobelH->Name = L"buttonSobelH";
 			this->buttonSobelH->Size = System::Drawing::Size(96, 32);
 			this->buttonSobelH->TabIndex = 11;
@@ -249,7 +272,7 @@ namespace imageprocessing {
 			// 
 			// buttonSobelC
 			// 
-			this->buttonSobelC->Location = System::Drawing::Point(544, 576);
+			this->buttonSobelC->Location = System::Drawing::Point(139, 27);
 			this->buttonSobelC->Name = L"buttonSobelC";
 			this->buttonSobelC->Size = System::Drawing::Size(96, 32);
 			this->buttonSobelC->TabIndex = 11;
@@ -259,7 +282,7 @@ namespace imageprocessing {
 			// 
 			// buttonOverlap
 			// 
-			this->buttonOverlap->Location = System::Drawing::Point(544, 640);
+			this->buttonOverlap->Location = System::Drawing::Point(139, 91);
 			this->buttonOverlap->Name = L"buttonOverlap";
 			this->buttonOverlap->Size = System::Drawing::Size(96, 32);
 			this->buttonOverlap->TabIndex = 11;
@@ -289,16 +312,16 @@ namespace imageprocessing {
 			// 
 			// textBoxThresh
 			// 
-			this->textBoxThresh->Location = System::Drawing::Point(288, 704);
+			this->textBoxThresh->Location = System::Drawing::Point(133, 21);
 			this->textBoxThresh->Name = L"textBoxThresh";
-			this->textBoxThresh->Size = System::Drawing::Size(96, 32);
+			this->textBoxThresh->Size = System::Drawing::Size(96, 22);
 			this->textBoxThresh->TabIndex = 12;
 			// 
 			// chart2
 			// 
 			chartArea1->Name = L"ChartArea2";
 			this->chart2->ChartAreas->Add(chartArea1);
-			this->chart2->Location = System::Drawing::Point(713, 657);
+			this->chart2->Location = System::Drawing::Point(689, 655);
 			this->chart2->Name = L"chart2";
 			series1->ChartArea = L"ChartArea2";
 			series1->Name = L"Series2";
@@ -311,7 +334,7 @@ namespace imageprocessing {
 			// 
 			chartArea2->Name = L"ChartArea1";
 			this->chart1->ChartAreas->Add(chartArea2);
-			this->chart1->Location = System::Drawing::Point(713, 551);
+			this->chart1->Location = System::Drawing::Point(689, 538);
 			this->chart1->Name = L"chart1";
 			series2->ChartArea = L"ChartArea1";
 			series2->Name = L"Series1";
@@ -325,15 +348,117 @@ namespace imageprocessing {
 			this->label1->AutoSize = true;
 			this->label1->Location = System::Drawing::Point(32, 479);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(33, 12);
+			this->label1->Size = System::Drawing::Size(61, 12);
 			this->label1->TabIndex = 16;
 			this->label1->Text = L"PixelFormat";
+			// 
+			// groupBox1
+			// 
+			this->groupBox1->Controls->Add(this->buttonSobelV);
+			this->groupBox1->Controls->Add(this->buttonSobelH);
+			this->groupBox1->Controls->Add(this->buttonSobelC);
+			this->groupBox1->Controls->Add(this->buttonOverlap);
+			this->groupBox1->Location = System::Drawing::Point(405, 550);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(252, 134);
+			this->groupBox1->TabIndex = 17;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"Question5,6";
+			// 
+			// groupBox2
+			// 
+			this->groupBox2->Controls->Add(this->buttonMean);
+			this->groupBox2->Controls->Add(this->buttonMedian);
+			this->groupBox2->Location = System::Drawing::Point(282, 551);
+			this->groupBox2->Name = L"groupBox2";
+			this->groupBox2->Size = System::Drawing::Size(112, 133);
+			this->groupBox2->TabIndex = 18;
+			this->groupBox2->TabStop = false;
+			this->groupBox2->Text = L"Question2";
+			// 
+			// groupBox3
+			// 
+			this->groupBox3->Controls->Add(this->buttonRed);
+			this->groupBox3->Controls->Add(this->buttonGreen);
+			this->groupBox3->Controls->Add(this->buttonBlue);
+			this->groupBox3->Controls->Add(this->buttonGray);
+			this->groupBox3->Location = System::Drawing::Point(25, 551);
+			this->groupBox3->Name = L"groupBox3";
+			this->groupBox3->Size = System::Drawing::Size(242, 133);
+			this->groupBox3->TabIndex = 19;
+			this->groupBox3->TabStop = false;
+			this->groupBox3->Text = L"Question3";
+			// 
+			// groupBox4
+			// 
+			this->groupBox4->Controls->Add(this->buttonThreshold);
+			this->groupBox4->Controls->Add(this->textBoxThresh);
+			this->groupBox4->Location = System::Drawing::Point(155, 690);
+			this->groupBox4->Name = L"groupBox4";
+			this->groupBox4->Size = System::Drawing::Size(238, 56);
+			this->groupBox4->TabIndex = 20;
+			this->groupBox4->TabStop = false;
+			this->groupBox4->Text = L"Question4";
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(32, 690);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(52, 12);
+			this->label2->TabIndex = 21;
+			this->label2->Text = L"Question3";
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(416, 690);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(52, 12);
+			this->label3->TabIndex = 22;
+			this->label3->Text = L"Question7";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(544, 690);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(52, 12);
+			this->label4->TabIndex = 23;
+			this->label4->Text = L"Question8";
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(689, 524);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(88, 12);
+			this->label5->TabIndex = 24;
+			this->label5->Text = L"Histogram Before";
+			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(689, 642);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(80, 12);
+			this->label6->TabIndex = 25;
+			this->label6->Text = L"Histogram After";
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1024, 768);
+			this->Controls->Add(this->label6);
+			this->Controls->Add(this->label5);
+			this->Controls->Add(this->label4);
+			this->Controls->Add(this->label3);
+			this->Controls->Add(this->label2);
+			this->Controls->Add(this->groupBox4);
+			this->Controls->Add(this->groupBox3);
+			this->Controls->Add(this->groupBox2);
+			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->chart1);
 			this->Controls->Add(this->chart2);
@@ -341,26 +466,19 @@ namespace imageprocessing {
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->picture_box2);
 			this->Controls->Add(this->button2);
-			this->Controls->Add(this->buttonRed);
-			this->Controls->Add(this->buttonGreen);
-			this->Controls->Add(this->buttonBlue);
-			this->Controls->Add(this->buttonGray);
-			this->Controls->Add(this->buttonMean);
-			this->Controls->Add(this->buttonMedian);
 			this->Controls->Add(this->buttonHistogram);
-			this->Controls->Add(this->buttonThreshold);
-			this->Controls->Add(this->buttonSobelV);
-			this->Controls->Add(this->buttonSobelH);
-			this->Controls->Add(this->buttonSobelC);
-			this->Controls->Add(this->buttonOverlap);
 			this->Controls->Add(this->buttonConnected);
 			this->Controls->Add(this->buttonRegistration);
-			this->Controls->Add(this->textBoxThresh);
 			this->Name = L"MyForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->EndInit();
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox2->ResumeLayout(false);
+			this->groupBox3->ResumeLayout(false);
+			this->groupBox4->ResumeLayout(false);
+			this->groupBox4->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1384,5 +1502,6 @@ namespace imageprocessing {
 		picture_box2->Image = RegistrationImage;
 		image_list[image_list_idx++] = RegistrationImage;
 	}
+
 };
 }
