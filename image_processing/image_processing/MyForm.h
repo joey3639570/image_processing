@@ -1,4 +1,5 @@
 #pragma once
+#include <stack>
 #include <cmath>
 #include <algorithm>
 
@@ -53,10 +54,14 @@ namespace imageprocessing {
 	private: System::Windows::Forms::Button^ buttonSobelH;
 	private: System::Windows::Forms::Button^ buttonSobelC;
 	private: System::Windows::Forms::Button^ buttonConnected;
+	private: System::Windows::Forms::Button^ buttonOverlap;
+	private: System::Windows::Forms::Button^ buttonRegistration;
 	private: System::Windows::Forms::TextBox^ textBoxThresh;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart2;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
 	private: System::Windows::Forms::Label^ label1;
+	private: array< Bitmap^ >^ image_list = gcnew array< Bitmap^ >(30);
+	private: int image_list_idx = 0;
 	private:
 		/// <summary>
 		/// 設計工具所需的變數。
@@ -91,6 +96,7 @@ namespace imageprocessing {
 			this->buttonSobelC = (gcnew System::Windows::Forms::Button());
 			this->buttonOverlap = (gcnew System::Windows::Forms::Button());
 			this->buttonConnected = (gcnew System::Windows::Forms::Button());
+			this->buttonRegistration = (gcnew System::Windows::Forms::Button());
 			this->textBoxThresh = (gcnew System::Windows::Forms::TextBox());
 			this->chart2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
@@ -203,7 +209,7 @@ namespace imageprocessing {
 			// 
 			// buttonHistogram
 			// 
-			this->buttonHistogram->Location = System::Drawing::Point(416, 576);
+			this->buttonHistogram->Location = System::Drawing::Point(32, 704);
 			this->buttonHistogram->Name = L"buttonHistogram";
 			this->buttonHistogram->Size = System::Drawing::Size(96, 32);
 			this->buttonHistogram->TabIndex = 10;
@@ -223,7 +229,7 @@ namespace imageprocessing {
 			// 
 			// buttonSobelV
 			// 
-			this->buttonSobelV->Location = System::Drawing::Point(544, 576);
+			this->buttonSobelV->Location = System::Drawing::Point(416, 576);
 			this->buttonSobelV->Name = L"buttonSobelV";
 			this->buttonSobelV->Size = System::Drawing::Size(96, 32);
 			this->buttonSobelV->TabIndex = 11;
@@ -233,7 +239,7 @@ namespace imageprocessing {
 			// 
 			// buttonSobelH
 			// 
-			this->buttonSobelH->Location = System::Drawing::Point(544, 640);
+			this->buttonSobelH->Location = System::Drawing::Point(416, 640);
 			this->buttonSobelH->Name = L"buttonSobelH";
 			this->buttonSobelH->Size = System::Drawing::Size(96, 32);
 			this->buttonSobelH->TabIndex = 11;
@@ -243,7 +249,7 @@ namespace imageprocessing {
 			// 
 			// buttonSobelC
 			// 
-			this->buttonSobelC->Location = System::Drawing::Point(544, 704);
+			this->buttonSobelC->Location = System::Drawing::Point(544, 576);
 			this->buttonSobelC->Name = L"buttonSobelC";
 			this->buttonSobelC->Size = System::Drawing::Size(96, 32);
 			this->buttonSobelC->TabIndex = 11;
@@ -253,7 +259,7 @@ namespace imageprocessing {
 			// 
 			// buttonOverlap
 			// 
-			this->buttonOverlap->Location = System::Drawing::Point(544, 768);
+			this->buttonOverlap->Location = System::Drawing::Point(544, 640);
 			this->buttonOverlap->Name = L"buttonOverlap";
 			this->buttonOverlap->Size = System::Drawing::Size(96, 32);
 			this->buttonOverlap->TabIndex = 11;
@@ -263,7 +269,7 @@ namespace imageprocessing {
 			// 
 			// buttonConnected
 			// 
-			this->buttonConnected->Location = System::Drawing::Point(32, 768);
+			this->buttonConnected->Location = System::Drawing::Point(416, 704);
 			this->buttonConnected->Name = L"buttonConnected";
 			this->buttonConnected->Size = System::Drawing::Size(96, 32);
 			this->buttonConnected->TabIndex = 11;
@@ -271,9 +277,19 @@ namespace imageprocessing {
 			this->buttonConnected->UseVisualStyleBackColor = true;
 			this->buttonConnected->Click += gcnew System::EventHandler(this, &MyForm::buttonConnected_Click);
 			// 
+			// buttonRegistration
+			// 
+			this->buttonRegistration->Location = System::Drawing::Point(544, 704);
+			this->buttonRegistration->Name = L"buttonRegistration";
+			this->buttonRegistration->Size = System::Drawing::Size(96, 32);
+			this->buttonRegistration->TabIndex = 11;
+			this->buttonRegistration->Text = L"Image Registration";
+			this->buttonRegistration->UseVisualStyleBackColor = true;
+			this->buttonRegistration->Click += gcnew System::EventHandler(this, &MyForm::buttonRegistration_Click);
+			// 
 			// textBoxThresh
 			// 
-			this->textBoxThresh->Location = System::Drawing::Point(32, 704);
+			this->textBoxThresh->Location = System::Drawing::Point(288, 704);
 			this->textBoxThresh->Name = L"textBoxThresh";
 			this->textBoxThresh->Size = System::Drawing::Size(96, 32);
 			this->textBoxThresh->TabIndex = 12;
@@ -317,7 +333,7 @@ namespace imageprocessing {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1024, 1024);
+			this->ClientSize = System::Drawing::Size(1024, 768);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->chart1);
 			this->Controls->Add(this->chart2);
@@ -338,6 +354,7 @@ namespace imageprocessing {
 			this->Controls->Add(this->buttonSobelC);
 			this->Controls->Add(this->buttonOverlap);
 			this->Controls->Add(this->buttonConnected);
+			this->Controls->Add(this->buttonRegistration);
 			this->Controls->Add(this->textBoxThresh);
 			this->Name = L"MyForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->EndInit();
@@ -361,7 +378,7 @@ namespace imageprocessing {
 		IntPtr ptr, GrayResultPtr, RedResultPtr, GreenResultPtr, BlueResultPtr;
 		IntPtr meanResultPtr, medianResultPtr, histResultPtr, threshResultPtr;
 		IntPtr sobelVResultPtr, sobelHResultPtr, sobelCResultPtr;
-		IntPtr connectedPtr, OverlapPtr;
+		IntPtr connectedPtr, OverlapPtr, RegistrationResultPtr;
 
 		// Byte pointer
 		Byte* p;
@@ -376,6 +393,7 @@ namespace imageprocessing {
 		Byte* sobelC;
 		Byte* connected;
 		Byte* Overlap;
+		Byte* Registration;
 
 #pragma endregion
 	private: System::Void button1_click_1(System::Object^ sender, System::EventArgs^ e) {
@@ -401,102 +419,14 @@ namespace imageprocessing {
 			//將影像顯示在picture_box1
 			picture_box1->Image = image1;
 			label1->Text = String::Format("Pixel format: {0}", image1->PixelFormat);
+			image_list[0] = image1;
+			image_list_idx = 1;
 		}
 	}
 	private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
-		// RGB Extraction & gray scale image
-
-		// declaration of BitMap object for results
-		Bitmap^ grayImage;
-		Bitmap^ blueImage;
-		Bitmap^ greenImage; 
-		Bitmap^ redImage;
-		grayImage	= gcnew Bitmap(image1->Width, image1->Height);
-		blueImage	= gcnew Bitmap(image1->Width, image1->Height);
-		greenImage	= gcnew Bitmap(image1->Width, image1->Height);
-		redImage	= gcnew Bitmap(image1->Width, image1->Height);
-
-		// declaration of BitMap object for pixels of results
-		Imaging::BitmapData^ grayImageData;
-		Imaging::BitmapData^ blueImageData;
-		Imaging::BitmapData^ greenImageData;
-		Imaging::BitmapData^ redImageData;
-
-		// Lock the image
-		grayImageData	= grayImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
-		blueImageData	= blueImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
-		greenImageData	= greenImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
-		redImageData	= redImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
-
-		// Gray, set int ptr to the front of the image
-		GrayResultPtr = grayImageData->Scan0;
-		Gr = (Byte*)((Void*)GrayResultPtr);
-		// Red
-		RedResultPtr = redImageData->Scan0;
-		R = (Byte*)((Void*)RedResultPtr);
-		// Green
-		GreenResultPtr = greenImageData->Scan0;
-		G = (Byte*)((Void*)GreenResultPtr);
-		// Blue
-		BlueResultPtr = blueImageData->Scan0;
-		B = (Byte*)((Void*)BlueResultPtr);
-
-		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
-		// set int ptr to the front of the image
-		ptr = ImageData1->Scan0;
-		// ptr initialization
-		p = (Byte*)((Void*)ptr);
-
-		// process all pixel
-		for (int y = 0; y < image1->Height; y++)
-		{
-			for (int x = 0; x < image1->Width; x++)
-			{
-				// Gray Scale calculation, Gray = R*0.299 + G*0.587 + B*0.114
-				// Using integer division for better performance, +50 for round
-				int pixel = (p[0]*11 + p[1]*59 + p[2]*30 + 50) / 100;
-				Gr[0] = (Byte)pixel;
-				Gr[1] = (Byte)pixel;
-				Gr[2] = (Byte)pixel;
-
-				// Red Calculation
-				pixel = (0 * 11 + 0 * 59 + p[2] * 30 + 50) / 100;
-				R[0] = (Byte)pixel;
-				R[1] = (Byte)pixel;
-				R[2] = (Byte)pixel;
-
-				// Green Calculation
-				pixel = (0 * 11 + p[1] * 59 + 0 * 30 + 50) / 100;
-				G[0] = (Byte)pixel;
-				G[1] = (Byte)pixel;
-				G[2] = (Byte)pixel;
-
-				// Blue Calculation
-				pixel = (p[0] * 11 + 0 * 59 + 0 * 30 + 50) / 100;
-				B[0] = (Byte)pixel;
-				B[1] = (Byte)pixel;
-				B[2] = (Byte)pixel;
-
-				// Move to next pixel
-				Gr	+= 3;
-				R	+= 3;
-				G	+= 3;
-				B	+= 3;
-				p	+= 3;
-			}
-		}
-
-		// Unlock pixel
-		image1->UnlockBits(ImageData1);
-		grayImage->UnlockBits(grayImageData);
-		redImage->UnlockBits(redImageData);
-		greenImage->UnlockBits(greenImageData);
-		blueImage->UnlockBits(blueImageData);
-
-
-		// show it on the pictureBox
-		picture_box2->Image = grayImage;
+		if (image_list_idx > 1)
+			image_list_idx -= 1;
+		picture_box2->Image = image_list[image_list_idx-1];
 	}
 		   
 	// Red Extraction
@@ -516,8 +446,11 @@ namespace imageprocessing {
 		RedResultPtr = redImageData->Scan0;
 		R = (Byte*)((Void*)RedResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -543,11 +476,12 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		redImage->UnlockBits(redImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = redImage;
+		image_list[image_list_idx++] = redImage;
 	}
 	private: System::Void buttonBlue_Click(System::Object^ sender, System::EventArgs^ e) {
 		// RGB Extraction & gray scale image
@@ -566,8 +500,11 @@ namespace imageprocessing {
 		BlueResultPtr = blueImageData->Scan0;
 		B = (Byte*)((Void*)BlueResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -593,12 +530,13 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		blueImage->UnlockBits(blueImageData);
 
 
 		// show it on the pictureBox
 		picture_box2->Image = blueImage;
+		image_list[image_list_idx++] = blueImage;
 	}
 	private: System::Void buttonGreen_Click(System::Object^ sender, System::EventArgs^ e) {
 		// RGB Extraction & gray scale image
@@ -617,8 +555,11 @@ namespace imageprocessing {
 		GreenResultPtr = greenImageData->Scan0;
 		G = (Byte*)((Void*)GreenResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -644,11 +585,12 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		greenImage->UnlockBits(greenImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = greenImage;
+		image_list[image_list_idx++] = greenImage;
 	}
 	private: System::Void buttonGray_Click(System::Object^ sender, System::EventArgs^ e) {
 		// RGB Extraction & gray scale image
@@ -667,8 +609,11 @@ namespace imageprocessing {
 		GrayResultPtr = grayImageData->Scan0;
 		Gr = (Byte*)((Void*)GrayResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -693,11 +638,12 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		grayImage->UnlockBits(grayImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = grayImage;
+		image_list[image_list_idx++] = grayImage;
 	}
 	private: System::Void buttonMean_Click(System::Object^ sender, System::EventArgs^ e) {
 		// Mean Filter
@@ -716,87 +662,72 @@ namespace imageprocessing {
 		meanResultPtr = meanImageData->Scan0;
 		mean = (Byte*)((Void*)meanResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
 		
-		int total = 0;
-		for (int y = 0; y < image1->Height + 1; y++)
+		// Byte ptr array
+		Byte* r[9];
+
+		// Array for pixel value and pixel index
+		int Array_r[9] = { 0 };
+		int Array_g[9] = { 0 };
+		int Array_b[9] = { 0 };
+
+		for (int y = 0; y < image1->Height; y++)
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
-				total++;
-			}
-		}
+				// not dealing with boundary cases
+				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
+				{
+					int Masksize = 0;
+					//save pixel value for calculating
+					for (int i = -1; i <= 1; i++)
+					{
+						for (int j = -3; j <= 3; j += 3)
+						{
+							// point the ptr to the target
+							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
+							// save pixel
+							Array_b[Masksize] = r[Masksize][0];
+							Array_g[Masksize] = r[Masksize][1];
+							Array_r[Masksize] = r[Masksize][2];
+							Masksize++;
+						}
+					}
+					int value_b = (Array_b[0] + Array_b[1] + Array_b[2] + Array_b[3] + Array_b[4] + Array_b[5] + Array_b[6] + Array_b[7] + Array_b[8]) / 9;
+					int value_g = (Array_g[0] + Array_g[1] + Array_g[2] + Array_g[3] + Array_g[4] + Array_g[5] + Array_g[6] + Array_g[7] + Array_g[8]) / 9;
+					int value_r = (Array_r[0] + Array_r[1] + Array_r[2] + Array_r[3] + Array_r[4] + Array_r[5] + Array_r[6] + Array_r[7] + Array_r[8]) / 9;
 
-		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height+1; y++)
-		{
-			for (int x = 0; x < image1->Width; x++)
-			{
-				// boundary cases
-				if(y == 0) {
-					int b_idx = 3*x;
-					int g_idx = 3*x + 1;
-					int r_idx = 3*x + 2;
-					mean[b_idx] = p[b_idx];
-					mean[g_idx] = p[g_idx];
-					mean[r_idx] = p[r_idx];
-					continue;
+					mean[0] = (Byte)value_b;
+					mean[1] = (Byte)value_g;
+					mean[2] = (Byte)value_r;
 				}
-				else if(y == image1->Height || x == 0 || x == image1->Width-1) {
-					int b_idx = 3*x + 3 * image1->Width * (y-1);
-					int g_idx = 3*x + 3 * image1->Width * (y-1) + 1;
-					int r_idx = 3*x + 3 * image1->Width * (y-1) + 2;
-					mean[b_idx] = p[b_idx];
-					mean[g_idx] = p[g_idx];
-					mean[r_idx] = p[r_idx];
-					continue;
+				else
+				{
+					mean[0] = p[0];
+					mean[1] = p[1];
+					mean[2] = p[2];
 				}
-				
-				// index setup
-				int top_left_idx 	= 3*(x-1) + 3 * image1->Width * (y-1);
-				int top_idx 		= 3*(x)   + 3 * image1->Width * (y-1);
-				int top_right_idx 	= 3*(x+1) + 3 * image1->Width * (y-1);
-				int left_idx 		= 3*(x-1) + 3 * image1->Width * (y);
-				int mid_idx 		= 3*(x)   + 3 * image1->Width * (y);
-				int right_idx 		= 3*(x+1) + 3 * image1->Width * (y);
-				int bot_left_idx 	= 3*(x-1) + 3 * image1->Width * (y+1);
-				int bot_idx 		= 3*(x)   + 3 * image1->Width * (y+1);
-				int bot_right_idx 	= 3*(x+1) + 3 * image1->Width * (y+1);
-				
-				label1->Text = String::Format("total pixel: {0}, top_left_idx: {1}", total, top_left_idx);
-
-				// mean_filter
-				int b_mean = (p[top_left_idx] + 
-					p[top_idx] + 
-					p[top_right_idx]
-					+ p[left_idx] + p[mid_idx] + p[right_idx]
-					+ p[bot_left_idx] + p[bot_idx] + p[bot_right_idx]) / 9;
-				int g_mean = (p[top_left_idx + 1] + p[top_idx + 1] + p[top_right_idx + 1]
-						+ p[left_idx + 1] + p[mid_idx + 1] + p[right_idx + 1]
-						+ p[bot_left_idx + 1] + p[bot_idx + 1] + p[bot_right_idx + 1]) / 9;
-				int r_mean = (p[top_left_idx + 2] + p[top_idx + 2] + p[top_right_idx + 2]
-						+ p[left_idx + 2] + p[mid_idx + 2] + p[right_idx + 2]
-						+ p[bot_left_idx + 2] + p[bot_idx + 2] + p[bot_right_idx + 2]) / 9;
-				
-				// put averaged value into the result
-				mean[mid_idx] = (Byte)b_mean;
-				mean[mid_idx+1] = (Byte)g_mean;
-				mean[mid_idx+2] = (Byte)r_mean;
-
+				mean += 3;
+				p += 3;
 			}
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		meanImage->UnlockBits(meanImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = meanImage;
+		image_list[image_list_idx++] = meanImage;
 	}
 	private: System::Void buttonMedian_Click(System::Object^ sender, System::EventArgs^ e) {
 		// Median Filter
@@ -815,80 +746,74 @@ namespace imageprocessing {
 		medianResultPtr = medianImageData->Scan0;
 		median = (Byte*)((Void*)medianResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
 
-		// process all pixel(without_boundary)
-		for (int y = 0; y < image1->Height+1; y++)
+		// Byte ptr array
+		Byte* r[9];
+
+		// Array for pixel value and pixel index
+		int Array_r[9] = { 0 };
+		int Array_g[9] = { 0 };
+		int Array_b[9] = { 0 };
+
+		for (int y = 0; y < image1->Height; y++)
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
-				// boundary cases
-				if(y == 0) {
-					int b_idx = 3*x;
-					int g_idx = 3*x + 1;
-					int r_idx = 3*x + 2;
-					median[b_idx] = p[b_idx];
-					median[g_idx] = p[g_idx];
-					median[r_idx] = p[r_idx];
-					continue;
-				}
-				else if(y == image1->Height || x == 0 || x == image1->Width-1) {
-					int b_idx = 3*x + 3 * image1->Width * (y-1);
-					int g_idx = 3*x + 3 * image1->Width * (y-1) + 1;
-					int r_idx = 3*x + 3 * image1->Width * (y-1) + 2;
-					median[b_idx] = p[b_idx];
-					median[g_idx] = p[g_idx];
-					median[r_idx] = p[r_idx];
-					continue;
-				}
-				
-				// index setup
-				int top_left_idx 	= 3*(x-1) + 3 * image1->Width * (y-1);
-				int top_idx 		= 3*(x)   + 3 * image1->Width * (y-1);
-				int top_right_idx 	= 3*(x+1) + 3 * image1->Width * (y-1);
-				int left_idx 		= 3*(x-1) + 3 * image1->Width * (y);
-				int mid_idx 		= 3*(x)   + 3 * image1->Width * (y);
-				int right_idx 		= 3*(x+1) + 3 * image1->Width * (y);
-				int bot_left_idx 	= 3*(x-1) + 3 * image1->Width * (y+1);
-				int bot_idx 		= 3*(x)   + 3 * image1->Width * (y+1);
-				int bot_right_idx 	= 3*(x+1) + 3 * image1->Width * (y+1);
-				
-				// array setup
-				int b_sorted_array[9] = { p[top_left_idx], p[top_idx], p[top_right_idx],
-										p[left_idx], p[mid_idx], p[right_idx],
-										p[bot_left_idx], p[bot_idx], p[bot_right_idx] };
-				int g_sorted_array[9] = { p[top_left_idx + 1], p[top_idx + 1], p[top_right_idx + 1],
-											p[left_idx + 1], p[mid_idx + 1], p[right_idx + 1],
-											p[bot_left_idx + 1], p[bot_idx + 1], p[bot_right_idx + 1] };
-				int r_sorted_array[9] = { p[top_left_idx + 2], p[top_idx + 2], p[top_right_idx + 2],
-											p[left_idx + 2], p[mid_idx + 2], p[right_idx + 2],
-											p[bot_left_idx + 2], p[bot_idx + 2], p[bot_right_idx + 2] };
-				
-				// sort array
-				std::sort(b_sorted_array, b_sorted_array+9);
-				std::sort(g_sorted_array, g_sorted_array+9);
-				std::sort(r_sorted_array, r_sorted_array+9);
-				
-				// median_filter
-				// put median into the result
-				median[mid_idx] = (Byte)b_sorted_array[5];
-				median[mid_idx+1] = (Byte)g_sorted_array[5];
-				median[mid_idx+2] = (Byte)r_sorted_array[5];
+				// not dealing with boundary cases
+				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
+				{
+					int Masksize = 0;
+					//save pixel value for calculating
+					for (int i = -1; i <= 1; i++)
+					{
+						for (int j = -3; j <= 3; j += 3)
+						{
+							// point the ptr to the target
+							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
+							// save pixel
+							Array_b[Masksize] = r[Masksize][0];
+							Array_g[Masksize] = r[Masksize][1];
+							Array_r[Masksize] = r[Masksize][2];
+							Masksize++;
+						}
+					}
 
+					// sort array
+					std::sort(Array_b, Array_b + 9);
+					std::sort(Array_g, Array_g + 9);
+					std::sort(Array_r, Array_r + 9);
+
+					median[0] = (Byte)Array_b[4];
+					median[1] = (Byte)Array_g[4];
+					median[2] = (Byte)Array_r[4];
+				}
+				else
+				{
+					median[0] = p[0];
+					median[1] = p[1];
+					median[2] = p[2];
+				}
+				median += 3;
+				p += 3;
 			}
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		medianImage->UnlockBits(medianImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = medianImage;
+		image_list[image_list_idx++] = medianImage;
 	}
 	private: System::Void buttonHistogram_Click(System::Object^ sender, System::EventArgs^ e) {
 		// Histogram Equalization
@@ -907,8 +832,11 @@ namespace imageprocessing {
 		histResultPtr = histImageData->Scan0;
 		Gr = (Byte*)((Void*)histResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -978,11 +906,12 @@ namespace imageprocessing {
 			chart2->Series["Series2"]->Points->AddXY(i, histogram_2[i]);
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		histImage->UnlockBits(histImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = histImage;
+		image_list[image_list_idx++] = histImage;
 	}
 	private: System::Void buttonThreshold_Click(System::Object^ sender, System::EventArgs^ e) {
 		// Threshold Filter 
@@ -993,6 +922,9 @@ namespace imageprocessing {
 		// declaration of BitMap object for results
 		Bitmap^ threshImage;
 		threshImage = gcnew Bitmap(image1->Width, image1->Height);
+
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
 
 		// declaration of BitMap object for pixels of results
 		Imaging::BitmapData^ threshImageData;
@@ -1005,16 +937,16 @@ namespace imageprocessing {
 		Gr = (Byte*)((Void*)threshResultPtr);
 
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
 
 		// process all pixel
-		for (int y = 0; y < image1->Height; y++)
+		for (int y = 0; y < topImage->Height; y++)
 		{
-			for (int x = 0; x < image1->Width; x++)
+			for (int x = 0; x < topImage->Width; x++)
 			{
 				int pixel;
 				// Threshold filter
@@ -1039,11 +971,12 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		threshImage->UnlockBits(threshImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = threshImage;
+		image_list[image_list_idx++] = threshImage;
 	}
 
 	private: System::Void buttonSobelV_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -1063,8 +996,11 @@ namespace imageprocessing {
 		sobelVResultPtr = sobelVImageData->Scan0;
 		sobelV = (Byte*)((Void*)sobelVResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -1092,13 +1028,12 @@ namespace imageprocessing {
 							// point the ptr to the target
 							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
 							// save pixel
-							Array[Masksize] = r[Masksize][0] + r[Masksize][1] + r[Masksize][2];
+							Array[Masksize] = (r[Masksize][0] * 11 + r[Masksize][1] * 59 + r[Masksize][2] * 30 + 50) / 100;
 							Masksize++;
 						}
 					}
 					int value = Array[0] + 2 * Array[1] + Array[2] - Array[6] - 2 * Array[7] - Array[8];
-				
-
+					
 					sobelV[0] = value;
 					sobelV[1] = value;
 					sobelV[2] = value;
@@ -1116,11 +1051,12 @@ namespace imageprocessing {
 
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		sobelVImage->UnlockBits(sobelVImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = sobelVImage;
+		image_list[image_list_idx++] = sobelVImage;
 	}
 
 	private: System::Void buttonSobelH_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -1140,8 +1076,11 @@ namespace imageprocessing {
 		sobelHResultPtr = sobelHImageData->Scan0;
 		sobelH = (Byte*)((Void*)sobelHResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -1169,13 +1108,12 @@ namespace imageprocessing {
 							// point the ptr to the target
 							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
 							// save pixel
-							Array[Masksize] = r[Masksize][0] + r[Masksize][1] + r[Masksize][2];
+							Array[Masksize] = (r[Masksize][0] * 11 + r[Masksize][1] * 59 + r[Masksize][2] * 30 + 50) / 100;
 							Masksize++;
 						}
 					}
 					int value = Array[0] - Array[2] + 2 * Array[3] - 2 * Array[5] + Array[6] - Array[8];
 				
-
 					sobelH[0] = value;
 					sobelH[1] = value;
 					sobelH[2] = value;
@@ -1192,11 +1130,12 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		sobelHImage->UnlockBits(sobelHImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = sobelHImage;
+		image_list[image_list_idx++] = sobelHImage;
 	}
 
 	private: System::Void buttonSobelC_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -1216,8 +1155,11 @@ namespace imageprocessing {
 		sobelCResultPtr = sobelCImageData->Scan0;
 		sobelC = (Byte*)((Void*)sobelCResultPtr);
 
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
 		// Lock the original image
-		ImageData1 = image1->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -1246,13 +1188,13 @@ namespace imageprocessing {
 							// point the ptr to the target
 							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
 							// save pixel
-							Array[Masksize] = r[Masksize][0] + r[Masksize][1] + r[Masksize][2];
+							Array[Masksize] = (r[Masksize][0] * 11 + r[Masksize][1] * 59 + r[Masksize][2] * 30 + 50) / 100;
 							Masksize++;
 						}
 					}
 					int value_v = Array[0] + 2 * Array[1] + Array[2] - Array[6] - 2 * Array[7] - Array[8];
 					int value_h = Array[0] - Array[2] + 2 * Array[3] - 2 * Array[5] + Array[6] - Array[8];
-					int value = value_v + value_h;
+					int value = (int)sqrt(abs(value_v) ^ 2 + abs(value_h) ^ 2);
 
 					sobelC[0] = value;
 					sobelC[1] = value;
@@ -1270,11 +1212,12 @@ namespace imageprocessing {
 		}
 
 		// Unlock pixel
-		image1->UnlockBits(ImageData1);
+		topImage->UnlockBits(ImageData1);
 		sobelCImage->UnlockBits(sobelCImageData);
 
 		// show it on the pictureBox
 		picture_box2->Image = sobelCImage;
+		image_list[image_list_idx++] = sobelCImage;
 	}
 	
 	private: System::Void buttonOverlap_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -1286,10 +1229,10 @@ namespace imageprocessing {
 		
 		// declaration of BitMap object for results
 		Bitmap^ overlapImage;
-		overlapImage = image1.clone(rect, image1->PixelFormat)
+		overlapImage = image1->Clone(rect, image1->PixelFormat);
 		
 		Bitmap^ topImage;
-		topImage = picture_box2->Image.clone(rect, image1->PixelFormat)
+		topImage = image_list[image_list_idx-1]->Clone(rect, image1->PixelFormat);
 
 		Color Px;
 
@@ -1304,6 +1247,7 @@ namespace imageprocessing {
 
 		// show it on the pictureBox
 		picture_box2->Image = overlapImage;
+		image_list[image_list_idx++] = overlapImage;
 	}
 	
 
@@ -1316,13 +1260,25 @@ namespace imageprocessing {
 		
 		// labeling conneceted components
 		int noElem = 0;
-
+		Color Px;
+		for (int y = 0; y < image1->Height; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				connectedImage->SetPixel(x, y, Px.FromArgb(255, 255, 255));
+			}
+		}
 		for (int y = 0; y < image1->Height; y++) 
 		{
 			for (int x = 0; x < image1->Width; x++) 
 			{
-				if ((image1->GetPixel(x, y).R != 0) && (connectedImage->GetPixel(x, y).R == 0))
-					recursiveFinder(x, y, ++noElem, image1, connectedImage);
+				if ((image1->GetPixel(x, y).R != 255) && (connectedImage->GetPixel(x, y).R == 255))
+					connectedComponents(x, y, ++noElem, image1, connectedImage);
+					//connectedImage->SetPixel(x, y, Px.FromArgb(0, 255, 0));
+				/*
+				else if ((image1->GetPixel(x, y).R == 255))
+					connectedImage->SetPixel(x, y, Px.FromArgb(255, 255, 0));
+				*/
 			}
 		}
 		
@@ -1331,20 +1287,102 @@ namespace imageprocessing {
 		picture_box2->Image = connectedImage;
 		label1->Text = String::Format("Number of Components : {0}", noElem);
 	}
-	private: System:: connectedComponents(int row, int col, int current_label, Bitmap^ bmp, Bitmap^ bmpTmp)
+	private: System::Void connectedComponents(int row, int col, int current_label, Bitmap^ bmp, Bitmap^ bmpTmp)
 	{
 		if (row < 0 || row == bmpTmp->Width) return;
 		if (col < 0 || col == bmpTmp->Height) return;
-		if ((bmp->GetPixel(row, col).R == 0) || (bmpTmp->GetPixel(row, col).R != 0)) return;
+		if ((bmp->GetPixel(row, col).R == 255) || bmpTmp->GetPixel(row, col).R != 255) return;
 
 		Color Px;
 		const int dx[] = { +1, 0, -1, 0, -1, 1, 1, -1 };
 		const int dy[] = { 0, +1, 0, -1, -1, 1, -1, 1 };
-
-		bmpTmp->SetPixel(row, col, Px.FromArgb(current_label, current_label, current_label));
+		int color_label = (current_label * 5) % 255;
+		bmpTmp->SetPixel(row, col, Px.FromArgb(color_label, color_label, color_label));
 
 		for (int direction = 0; direction < 8; ++direction)
-			recursiveFinder(row + dx[direction], col + dy[direction], current_label, bmp, bmpTmp);
+			connectedComponents(row + dx[direction], col + dy[direction], current_label, bmp, bmpTmp);
+	}
+
+	private: System::Void buttonRegistration_Click(System::Object^ sender, System::EventArgs^ e) {
+		// Mean Filter
+
+		// declaration of BitMap object for results
+		Bitmap^ RegistrationImage;
+		RegistrationImage = gcnew Bitmap(image1->Width, image1->Height);
+
+		// declaration of BitMap object for pixels of results
+		Imaging::BitmapData^ RegistrationImageData;
+
+		// Lock the image
+		RegistrationImageData = RegistrationImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+
+		// Gray, set int ptr to the front of the image
+		RegistrationResultPtr = RegistrationImageData->Scan0;
+		Registration = (Byte*)((Void*)RegistrationResultPtr);
+
+		Bitmap^ topImage;
+		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
+
+		// Lock the original image
+		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		// set int ptr to the front of the image
+		ptr = ImageData1->Scan0;
+		// ptr initialization
+		p = (Byte*)((Void*)ptr);
+
+
+		// Byte ptr array
+		Byte* r[9];
+
+		// Array for pixel value and pixel index
+		int Array[9] = { 0 };
+
+		for (int y = 0; y < image1->Height; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				// not dealing with boundary cases
+				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
+				{
+					int Masksize = 0;
+					//save pixel value for calculating
+					for (int i = -1; i <= 1; i++)
+					{
+						for (int j = -3; j <= 3; j += 3)
+						{
+							// point the ptr to the target
+							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
+							// save pixel
+							Array[Masksize] = (r[Masksize][0] * 11 + r[Masksize][1] * 59 + r[Masksize][2] * 30 + 50) / 100;
+							Masksize++;
+						}
+					}
+					int value_v = Array[0] + 2 * Array[1] + Array[2] - Array[6] - 2 * Array[7] - Array[8];
+					int value_h = Array[0] - Array[2] + 2 * Array[3] - 2 * Array[5] + Array[6] - Array[8];
+					int value = (int)sqrt(abs(value_v) ^ 2 + abs(value_h) ^ 2);
+
+					Registration[0] = value;
+					Registration[1] = value;
+					Registration[2] = value;
+				}
+				else
+				{
+					Registration[0] = p[0];
+					Registration[1] = p[1];
+					Registration[2] = p[2];
+				}
+				Registration += 3;
+				p += 3;
+			}
+		}
+
+		// Unlock pixel
+		topImage->UnlockBits(ImageData1);
+		RegistrationImage->UnlockBits(RegistrationImageData);
+
+		// show it on the pictureBox
+		picture_box2->Image = RegistrationImage;
+		image_list[image_list_idx++] = RegistrationImage;
 	}
 };
 }
