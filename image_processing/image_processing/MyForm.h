@@ -61,7 +61,10 @@ namespace imageprocessing {
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
 	private: System::Windows::Forms::Label^ label1;
 	private: array< Bitmap^ >^ image_list = gcnew array< Bitmap^ >(30);
+	private: array<Point^ >^ point_list = gcnew array<Point^ >(4);
 	private: int image_list_idx = 0;
+	private: int point_list_idx = 0;
+	private: int point_list_2_idx = 4;
 	private: System::Windows::Forms::GroupBox^ groupBox1;
 	private: System::Windows::Forms::GroupBox^ groupBox2;
 	private: System::Windows::Forms::GroupBox^ groupBox3;
@@ -71,6 +74,11 @@ namespace imageprocessing {
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::Label^ label5;
 	private: System::Windows::Forms::Label^ label6;
+	private: System::Windows::Forms::Button^ button3;
+	private: System::Windows::Forms::Label^ label7;
+	private: System::Windows::Forms::Label^ label8;
+	private: System::Windows::Forms::Label^ label9;
+	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
 
 	private:
 		/// <summary>
@@ -120,6 +128,11 @@ namespace imageprocessing {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->label9 = (gcnew System::Windows::Forms::Label());
+			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picture_box2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart2))->BeginInit();
@@ -152,7 +165,7 @@ namespace imageprocessing {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(704, 484);
+			this->button2->Location = System::Drawing::Point(445, 484);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(128, 32);
 			this->button2->TabIndex = 2;
@@ -445,11 +458,52 @@ namespace imageprocessing {
 			this->label6->TabIndex = 25;
 			this->label6->Text = L"Histogram After";
 			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(703, 484);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(128, 32);
+			this->button3->TabIndex = 26;
+			this->button3->Text = L"開啟圖片";
+			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &MyForm::button3_Click);
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(838, 479);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(72, 12);
+			this->label7->TabIndex = 27;
+			this->label7->Text = L"Scaling factor:";
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Location = System::Drawing::Point(838, 495);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(76, 12);
+			this->label8->TabIndex = 28;
+			this->label8->Text = L"Rotation angle:";
+			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Location = System::Drawing::Point(838, 511);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(98, 12);
+			this->label9->TabIndex = 29;
+			this->label9->Text = L"Intensity difference:";
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1024, 768);
+			this->Controls->Add(this->label9);
+			this->Controls->Add(this->label8);
+			this->Controls->Add(this->label7);
+			this->Controls->Add(this->button3);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->label4);
@@ -486,6 +540,9 @@ namespace imageprocessing {
 		// Bitmap object for the picture you opened宣告Bitmap 儲存開啟的圖
 		Bitmap^ image1;
 
+		// Bitmap for registration
+		Bitmap^ image2;
+
 		// BitmapData object data for pixel
 		Imaging::BitmapData^ ImageData1;
 
@@ -512,6 +569,8 @@ namespace imageprocessing {
 		Byte* connected;
 		Byte* Overlap;
 		Byte* Registration;
+
+		Point coordinates;
 
 #pragma endregion
 	private: System::Void button1_click_1(System::Object^ sender, System::EventArgs^ e) {
@@ -1365,7 +1424,6 @@ namespace imageprocessing {
 
 		// show it on the pictureBox
 		picture_box2->Image = overlapImage;
-		image_list[image_list_idx++] = overlapImage;
 	}
 	
 
@@ -1422,11 +1480,66 @@ namespace imageprocessing {
 	}
 
 	private: System::Void buttonRegistration_Click(System::Object^ sender, System::EventArgs^ e) {
-		// Mean Filter
 
 		// declaration of BitMap object for results
 		Bitmap^ RegistrationImage;
 		RegistrationImage = gcnew Bitmap(image1->Width, image1->Height);
+
+		// find Homography
+		float P[8][9] =
+		{
+			{-point_list[0]->X, -point_list[0]->Y, -1,   0,   0,  0, point_list[0]->X * point_list[4]->X, point_list[0]->Y * point_list[4]->X, -point_list[4]->X }, // h11
+			{  0,   0,  0, -point_list[0]->X, -point_list[0]->Y, -1, point_list[0]->X * point_list[4]->Y, point_list[0]->Y * point_list[4]->Y, -point_list[4]->Y }, // h12
+
+			{-point_list[1]->X, -point_list[1]->Y, -1,   0,   0,  0, point_list[1]->X * point_list[5]->X, point_list[1]->Y * point_list[5]->X, -point_list[5]->X }, // h13
+			{  0,   0,  0, -point_list[1]->X, -point_list[1]->Y, -1, point_list[1]->X * point_list[5]->Y, point_list[1]->Y * point_list[5]->Y, -point_list[5]->Y }, // h21
+
+			{-point_list[2]->X, -point_list[2]->Y, -1,   0,   0,  0, point_list[2]->X * point_list[6]->X, point_list[2]->Y * point_list[6]->X, -point_list[6]->X }, // h22
+			{  0,   0,  0, -point_list[2]->X, -point_list[2]->Y, -1, point_list[2]->X * point_list[6]->Y, point_list[2]->Y * point_list[6]->Y, -point_list[6]->Y }, // h23
+
+			{-point_list[3]->X, -point_list[3]->Y, -1,   0,   0,  0, point_list[3]->X * point_list[7]->X, point_list[3]->Y * point_list[7]->X, -point_list[7]->X }, // h31
+			{  0,   0,  0, -point_list[3]->X, -point_list[3]->Y, -1, point_list[3]->X * point_list[7]->Y, point_list[3]->Y * point_list[7]->Y, -point_list[7]->Y }, // h32
+		};
+
+		gaussian_elimination(&P[0][0], 9);
+
+		// gaussian elimination gives the results of the equation system
+		// in the last column of the original matrix.
+		// opengl needs the transposed 4x4 matrix:
+		float aux_H[] = { P[0][8], P[1][8], P[2][8],	// h11  h21 0 h31
+						P[3][8], P[4][8], P[5][8],	// h12  h22 0 h32
+						P[6][8], P[7][8], 1 };		// h13  h23 0 h33
+
+		float a = aux_H[0];
+		float b = aux_H[1];
+		float c = aux_H[2];
+		float d = aux_H[3];
+		float e_ = aux_H[4];
+		float f = aux_H[5];
+
+		float p_ = sqrt(a * a + b * b);
+		float r_ = (a * e_ - b * d) / (p_);
+		float q = (a * d + b * e_) / (a * e_ - b * d);
+
+		float translation_x = c;
+		float translation_y = f;
+		float scale_x = p_;
+		float scale_y = r_;
+		float shear = q;
+		float angle = atan2(b, a);
+
+		label7->Text = String::Format("Scaling Factor x :{0}, y:{1},", scale_x, scale_y);
+		label8->Text = String::Format("Rotating Angle {0}", angle);
+
+		for (int y = 0; y < image1->Height; y++)
+		{
+			for (int x = 0; x < image1->Width; x++)
+			{
+				int x_after = x * aux_H[0] + y * aux_H[3] + aux_H[6];
+				int y_after = x * aux_H[1] + y * aux_H[4] + aux_H[7];
+				RegistrationImage->SetPixel(x_after, y_after, image1->GetPixel(x, y));
+			}
+		}
 
 		// declaration of BitMap object for pixels of results
 		Imaging::BitmapData^ RegistrationImageData;
@@ -1448,52 +1561,23 @@ namespace imageprocessing {
 		// ptr initialization
 		p = (Byte*)((Void*)ptr);
 
-
-		// Byte ptr array
-		Byte* r[9];
-
-		// Array for pixel value and pixel index
-		int Array[9] = { 0 };
-
+		int total_pixels = 0;
+		int sum = 0;
 		for (int y = 0; y < image1->Height; y++)
 		{
 			for (int x = 0; x < image1->Width; x++)
 			{
-				// not dealing with boundary cases
-				if (y > 0 && x > 0 && y < image1->Height - 1 && x < image1->Width - 1)
-				{
-					int Masksize = 0;
-					//save pixel value for calculating
-					for (int i = -1; i <= 1; i++)
-					{
-						for (int j = -3; j <= 3; j += 3)
-						{
-							// point the ptr to the target
-							r[Masksize] = (Byte*)(Void*)p + i * image1->Width * 3 + j;
-							// save pixel
-							Array[Masksize] = (r[Masksize][0] * 11 + r[Masksize][1] * 59 + r[Masksize][2] * 30 + 50) / 100;
-							Masksize++;
-						}
-					}
-					int value_v = Array[0] + 2 * Array[1] + Array[2] - Array[6] - 2 * Array[7] - Array[8];
-					int value_h = Array[0] - Array[2] + 2 * Array[3] - 2 * Array[5] + Array[6] - Array[8];
-					int value = (int)sqrt(abs(value_v) ^ 2 + abs(value_h) ^ 2);
-
-					Registration[0] = value;
-					Registration[1] = value;
-					Registration[2] = value;
-				}
-				else
-				{
-					Registration[0] = p[0];
-					Registration[1] = p[1];
-					Registration[2] = p[2];
-				}
+				total_pixels++;
+				sum += abs(Registration[0] - p[0]);
 				Registration += 3;
 				p += 3;
 			}
 		}
+		float pixel_intensity = sum / total_pixels;
 
+		label9->Text = String::Format("Intensity Difference {0}", pixel_intensity);
+
+		
 		// Unlock pixel
 		topImage->UnlockBits(ImageData1);
 		RegistrationImage->UnlockBits(RegistrationImageData);
@@ -1503,5 +1587,109 @@ namespace imageprocessing {
 		image_list[image_list_idx++] = RegistrationImage;
 	}
 
+public:System::Void picture_box1_Click(System::Object^ sender, MouseEventArgs^ e)
+	{
+		coordinates = e->Location;
+		if (point_list_idx > 3)
+			point_list_idx = 0;
+		point_list[point_list_idx++] = coordinates;
+		label7->Text = String::Format("click {0}", coordinates.X);
+	}
+
+public:System::Void picture_box2_Click(System::Object^ sender, MouseEventArgs^ e)
+	{
+		coordinates = e->Location;
+		if (point_list_idx > 7)
+			point_list_idx = 4;
+		point_list[point_list_idx++] = coordinates;
+	}
+
+private: static void gaussian_elimination(float* input, int n)
+	{
+		float* A = input;
+		int i = 0;
+		int j = 0;
+		//m = 8 rows, n = 9 cols
+		int m = n - 1;
+		while (i < m && j < n)
+		{
+			// Find pivot in column j, starting in row i:
+			int maxi = i;
+			for (int k = i + 1; k < m; k++)
+			{
+				//select largest
+				if (fabs(A[k * n + j]) > fabs(A[maxi * n + j]))
+				{
+					maxi = k;
+				}
+			}
+			if (A[maxi * n + j] != 0)
+			{
+				//swap rows i and maxi, but do not change the value of i
+				if (i != maxi)
+					for (int k = 0; k < n; k++)
+					{
+						float aux = A[i * n + k];
+						A[i * n + k] = A[maxi * n + k];
+						A[maxi * n + k] = aux;
+					}
+				//Now A[i,j] will contain the old value of A[maxi,j].
+				//divide each entry in row i by A[i,j]
+				float A_ij = A[i * n + j];
+				for (int k = 0; k < n; k++)
+				{
+					A[i * n + k] /= A_ij;
+				}
+				//Now A[i,j] will have the value 1.
+				for (int u = i + 1; u < m; u++)
+				{
+					//subtract A[u,j] * row i from row u
+					float A_uj = A[u * n + j];
+					for (int k = 0; k < n; k++)
+					{
+						A[u * n + k] -= A_uj * A[i * n + k];
+					}
+					//Now A[u,j] will be 0, since A[u,j] - A[i,j] * A[u,j] = A[u,j] - 1 * A[u,j] = 0.
+				}
+				i++;
+			}
+			j++;
+		}
+
+		//back substitution
+		for (int i = m - 2; i >= 0; i--)
+		{
+			for (int j = i + 1; j < n - 1; j++)
+			{
+				A[i * n + m] -= A[i * n + j] * A[j * n + m];
+			}
+		}
+
+	}
+
+private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e) {
+	// use openFileDialog
+	OpenFileDialog^ openFileDialog1 = gcnew OpenFileDialog;
+	// Setup Filter，for bmp only
+	openFileDialog1->Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG|All files (*.*)|*.*";
+	// Initialization
+	openFileDialog1->FileName = "";
+	// Setup Title
+	openFileDialog1->Title = "讀入影像";
+	//設定Filter選擇模式(依照Filter數，如本例選擇1表示起始出現的為點陣圖，選擇2表示All filts)
+	openFileDialog1->FilterIndex = 1;
+
+
+	// ShowDialog，check if file is selected, if filename length is larger than 0, then load file
+	if (openFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK && openFileDialog1->FileName->Length > 0)
+	{
+		// Load file into Image1
+		image2 = safe_cast<Bitmap^>(Image::FromFile(openFileDialog1->FileName));
+		//設定rect
+		rect = Rectangle(0, 0, image2->Width, image2->Height);
+		//將影像顯示在picture_box1
+		picture_box2->Image = image2;
+	}
+}
 };
 }

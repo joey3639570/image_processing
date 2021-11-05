@@ -19,3 +19,6 @@ Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c5619
 Class imageprocessing.MyForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    picture_box1_Click(Object, MouseEventArgs): PrivateScope, Public, HideBySig
+    picture_box2_Click(Object, MouseEventArgs): PrivateScope, Public, HideBySig
