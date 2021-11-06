@@ -1,24 +1,4 @@
 ﻿  MyForm.cpp
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,5): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,5): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,24): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,24): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,78): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,78): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,115): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,115): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,135): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1491,135): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,19): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,19): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,38): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,38): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,78): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,78): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,115): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,115): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,135): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1492,135): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1494,5): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1494,5): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1494,24): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
@@ -79,8 +59,28 @@ C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_process
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1501,115): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1501,135): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
 C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1501,135): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1538,17): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1539,17): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1576,25): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,5): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,5): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,24): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,24): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,78): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,78): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,115): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,115): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,135): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1503,135): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,19): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,19): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,38): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,38): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,78): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,78): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,115): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,115): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,135): warning C4838: 從 'int' 到 'float' 的轉換必須是縮小轉換
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1504,135): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1559,17): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1560,17): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\image_processing\MyForm.h(1607,25): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
   MyForm.obj : 發現 MSIL 模組。MSIL 的累加連結已停用。正在執行完整連結
   image_processing.vcxproj -> C:\Users\CCY02\Desktop\workplace\image_processing\image_processing\Debug\image_processing.exe

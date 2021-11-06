@@ -61,7 +61,7 @@ namespace imageprocessing {
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ chart1;
 	private: System::Windows::Forms::Label^ label1;
 	private: array< Bitmap^ >^ image_list = gcnew array< Bitmap^ >(30);
-	private: array<Point^ >^ point_list = gcnew array<Point^ >(4);
+	private: array<Point^ >^ point_list = gcnew array<Point^ >(8);
 	private: int image_list_idx = 0;
 	private: int point_list_idx = 0;
 	private: int point_list_2_idx = 4;
@@ -162,6 +162,7 @@ namespace imageprocessing {
 			this->picture_box1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->picture_box1->TabIndex = 1;
 			this->picture_box1->TabStop = false;
+			this->picture_box1->MouseClick += gcnew MouseEventHandler(this, &MyForm::picture_box1_Click);
 			// 
 			// button2
 			// 
@@ -182,6 +183,7 @@ namespace imageprocessing {
 			this->picture_box2->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->picture_box2->TabIndex = 3;
 			this->picture_box2->TabStop = false;
+			this->picture_box2->MouseClick += gcnew MouseEventHandler(this, &MyForm::picture_box2_Click);
 			// 
 			// buttonRed
 			// 
@@ -1483,9 +1485,25 @@ namespace imageprocessing {
 
 		// declaration of BitMap object for results
 		Bitmap^ RegistrationImage;
-		RegistrationImage = gcnew Bitmap(image1->Width, image1->Height);
+		RegistrationImage = gcnew Bitmap(image2->Width, image2->Height);
 
 		// find Homography
+		
+		float P[8][9] =
+		{
+			{-point_list[4]->X, -point_list[4]->Y, -1,   0,   0,  0, point_list[4]->X * point_list[0]->X, point_list[4]->Y * point_list[0]->X, -point_list[0]->X }, // h11
+			{  0,   0,  0, -point_list[4]->X, -point_list[4]->Y, -1, point_list[4]->X * point_list[0]->Y, point_list[4]->Y * point_list[0]->Y, -point_list[0]->Y }, // h12
+
+			{-point_list[5]->X, -point_list[5]->Y, -1,   0,   0,  0, point_list[5]->X * point_list[1]->X, point_list[5]->Y * point_list[1]->X, -point_list[1]->X }, // h13
+			{  0,   0,  0, -point_list[5]->X, -point_list[5]->Y, -1, point_list[5]->X * point_list[1]->Y, point_list[5]->Y * point_list[1]->Y, -point_list[1]->Y }, // h21
+
+			{-point_list[6]->X, -point_list[6]->Y, -1,   0,   0,  0, point_list[6]->X * point_list[2]->X, point_list[6]->Y * point_list[2]->X, -point_list[2]->X }, // h22
+			{  0,   0,  0, -point_list[6]->X, -point_list[6]->Y, -1, point_list[6]->X * point_list[2]->Y, point_list[6]->Y * point_list[2]->Y, -point_list[2]->Y }, // h23
+
+			{-point_list[7]->X, -point_list[7]->Y, -1,   0,   0,  0, point_list[7]->X * point_list[3]->X, point_list[7]->Y * point_list[3]->X, -point_list[3]->X }, // h31
+			{  0,   0,  0, -point_list[7]->X, -point_list[7]->Y, -1, point_list[7]->X * point_list[3]->Y, point_list[7]->Y * point_list[3]->Y, -point_list[3]->Y }, // h32
+		};
+		/*
 		float P[8][9] =
 		{
 			{-point_list[0]->X, -point_list[0]->Y, -1,   0,   0,  0, point_list[0]->X * point_list[4]->X, point_list[0]->Y * point_list[4]->X, -point_list[4]->X }, // h11
@@ -1500,7 +1518,7 @@ namespace imageprocessing {
 			{-point_list[3]->X, -point_list[3]->Y, -1,   0,   0,  0, point_list[3]->X * point_list[7]->X, point_list[3]->Y * point_list[7]->X, -point_list[7]->X }, // h31
 			{  0,   0,  0, -point_list[3]->X, -point_list[3]->Y, -1, point_list[3]->X * point_list[7]->Y, point_list[3]->Y * point_list[7]->Y, -point_list[7]->Y }, // h32
 		};
-
+		*/
 		gaussian_elimination(&P[0][0], 9);
 
 		// gaussian elimination gives the results of the equation system
@@ -1530,19 +1548,35 @@ namespace imageprocessing {
 
 		label7->Text = String::Format("Scaling Factor x :{0}, y:{1},", scale_x, scale_y);
 		label8->Text = String::Format("Rotating Angle {0}", angle);
+		//label8->Text = String::Format("aux_H{0}~{1}~{2},", aux_H[3], aux_H[4], aux_H[5]);
+		//label7->Text = String::Format("aux_H{0}~{1}~{2}", aux_H[0], aux_H[1], aux_H[2]);
+			
 
-		for (int y = 0; y < image1->Height; y++)
+		for (int y = 0; y < image2->Height; y++)
 		{
-			for (int x = 0; x < image1->Width; x++)
+			for (int x = 0; x < image2->Width; x++)
 			{
-				int x_after = x * aux_H[0] + y * aux_H[3] + aux_H[6];
-				int y_after = x * aux_H[1] + y * aux_H[4] + aux_H[7];
-				RegistrationImage->SetPixel(x_after, y_after, image1->GetPixel(x, y));
+				int x_after = x * aux_H[0] + y * aux_H[1] + aux_H[2];
+				int y_after = x * aux_H[3] + y * aux_H[4] + aux_H[5];
+				if (x_after < 0)
+					x_after = 0;
+				else if (x_after >= image2->Width)
+					x_after = image2->Width-1;
+				if (y_after < 0)
+					y_after = 0;
+				else if (y_after >= image2->Height)
+					y_after = image2->Height - 1;
+				RegistrationImage->SetPixel(x_after, y_after, image2->GetPixel(x, y));
 			}
 		}
 
 		// declaration of BitMap object for pixels of results
 		Imaging::BitmapData^ RegistrationImageData;
+
+		// Image area
+		Rectangle rect;
+		//³]©wrect
+		rect = Rectangle(0, 0, image2->Width, image2->Height);
 
 		// Lock the image
 		RegistrationImageData = RegistrationImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
@@ -1551,11 +1585,8 @@ namespace imageprocessing {
 		RegistrationResultPtr = RegistrationImageData->Scan0;
 		Registration = (Byte*)((Void*)RegistrationResultPtr);
 
-		Bitmap^ topImage;
-		topImage = image_list[image_list_idx - 1]->Clone(rect, image1->PixelFormat);
-
 		// Lock the original image
-		ImageData1 = topImage->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
+		ImageData1 = image2->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadWrite, image1->PixelFormat);
 		// set int ptr to the front of the image
 		ptr = ImageData1->Scan0;
 		// ptr initialization
@@ -1563,9 +1594,9 @@ namespace imageprocessing {
 
 		int total_pixels = 0;
 		int sum = 0;
-		for (int y = 0; y < image1->Height; y++)
+		for (int y = 0; y < image2->Height; y++)
 		{
-			for (int x = 0; x < image1->Width; x++)
+			for (int x = 0; x < image2->Width; x++)
 			{
 				total_pixels++;
 				sum += abs(Registration[0] - p[0]);
@@ -1576,10 +1607,9 @@ namespace imageprocessing {
 		float pixel_intensity = sum / total_pixels;
 
 		label9->Text = String::Format("Intensity Difference {0}", pixel_intensity);
-
+		//label9->Text = String::Format("aux_H{0}~{1}~{2},", aux_H[6], aux_H[7], aux_H[8]);
 		
 		// Unlock pixel
-		topImage->UnlockBits(ImageData1);
 		RegistrationImage->UnlockBits(RegistrationImageData);
 
 		// show it on the pictureBox
@@ -1593,15 +1623,16 @@ public:System::Void picture_box1_Click(System::Object^ sender, MouseEventArgs^ e
 		if (point_list_idx > 3)
 			point_list_idx = 0;
 		point_list[point_list_idx++] = coordinates;
-		label7->Text = String::Format("click {0}", coordinates.X);
+		label7->Text = String::Format("click {0}, {1}", coordinates.X, coordinates.Y);
 	}
 
 public:System::Void picture_box2_Click(System::Object^ sender, MouseEventArgs^ e)
 	{
 		coordinates = e->Location;
-		if (point_list_idx > 7)
-			point_list_idx = 4;
-		point_list[point_list_idx++] = coordinates;
+		if (point_list_2_idx > 7)
+			point_list_2_idx = 4;
+		point_list[point_list_2_idx++] = coordinates;
+		label7->Text = String::Format("click {0}, {1}", coordinates.X, coordinates.Y);
 	}
 
 private: static void gaussian_elimination(float* input, int n)
