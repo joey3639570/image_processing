@@ -273,7 +273,7 @@ namespace imageprocessing {
 			this->buttonSobelV->TabIndex = 11;
 			this->buttonSobelV->Text = L"Sobel Vertical";
 			this->buttonSobelV->UseVisualStyleBackColor = true;
-			this->buttonSobelV->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelV_Click);
+			this->buttonSobelV->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelH_Click);
 			// 
 			// buttonSobelH
 			// 
@@ -283,7 +283,7 @@ namespace imageprocessing {
 			this->buttonSobelH->TabIndex = 11;
 			this->buttonSobelH->Text = L"Sobel Horizontal";
 			this->buttonSobelH->UseVisualStyleBackColor = true;
-			this->buttonSobelH->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelH_Click);
+			this->buttonSobelH->Click += gcnew System::EventHandler(this, &MyForm::buttonSobelV_Click);
 			// 
 			// buttonSobelC
 			// 
